@@ -1,0 +1,89 @@
+<html>
+<meta charset='utf-8'>
+<head>
+    <script src='https://d3js.org/d3.v7.min.js'></script>
+    <style>
+        .gridlines .domain {
+            stroke: none;
+        }
+    </style>
+</head>
+<body>
+    <div id='plot1'></div>
+    <br>
+    <div id='plot2'></div>
+    <script>
+        let plot1Div = d3.select('#plot1');
+        let plot2Div = d3.select('#plot2');
+        let file = 'mammals.csv';
+        let plotWidth = 500;
+        let plotHeight = 500;
+        let circleRadius = 5;
+        let circleOpacity = 0.7;
+        
+        d3.csv(file).then( (data) => {
+            const svg = plot1Div.append('svg')
+                            .attr('width', plotWidth)
+                            .attr('height', plotHeight)
+                            .style('border', '1px solid black')
+            const chartArea = svg.append('g');
+
+            const svg2 = plot2Div.append('svg')
+                            .attr('width', plotWidth)
+                            .attr('height', plotHeight)
+                            .style('border', '1px solid black')
+            const chartArea2 = svg2.append('g');
+
+            // Remove NAs
+            data = data.filter( d => (d.gestation != "NA" && d.total_sleep != "NA"))
+
+            // Convert strings to numbers
+            data.forEach( (d) => {
+		        d.gestation = Number(d.gestation);
+                d.total_sleep = Number(d.total_sleep);
+                d.brain_wt = Number(d.brain_wt);
+                d.body_wt = Number(d.body_wt);
+                d.pred = Number(d.predation);
+	        })
+
+            console.log(data);
+            console.log(data[0].brain_wt)
+            const gesRange = d3.extent( data, d => d.gestation);
+            const sleepRange = d3.extent( data, d => d.total_sleep);
+            const brweightRange = d3.extent( data, d => d.brain_wt);
+            const boweightRange = d3.extent( data, d => d.body_wt);
+            const predRange = d3.extent( data, d => d.pred);
+            console.log(gesRange);
+            console.log(sleepRange);
+            console.log(brweightRange);
+            console.log(boweightRange);
+            console.log(predRange);
+
+            const gesScale = d3.scaleLinear().domain(gesRange).range([circleRadius, plotWidth - circleRadius]);
+            const sleepScale = d3.scaleLinear().domain(sleepRange).range([plotHeight - circleRadius, circleRadius]);
+            const colorScale = d3.scaleLinear().domain(predRange).range(['#E41A1C', '#4DAF4A']).interpolate(d3.interpolateHcl);
+            const basicXScale = d3.scaleLinear().domain([0, data.length]).range([0, plotWidth]);
+
+            data.forEach( (d, i) => {
+                // Gestation vs. total_sleep, stratified by predation
+                chartArea.append('circle')
+                         .attr('cx', gesScale(d.gestation))
+                         .attr('cy', sleepScale(d.total_sleep))
+                         .attr('r', circleRadius)
+                         .attr('opacity', circleOpacity)
+                         .attr('index', i)
+                         .style('fill', colorScale(d.pred))
+                
+                //
+                chartArea2.append('rect')
+                          .attr('x', basicXScale(i))
+                          .attr('y', plotHeight - gesScale(d.gestation))
+                          .attr('height', gesScale(d.gestation))
+                          .attr('width', plotWidth/data.length)
+                          .style('fill', colorScale(d.pred))
+            })
+        });
+
+    </script>
+</body>
+</html>
