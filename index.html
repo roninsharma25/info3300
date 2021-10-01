@@ -16,17 +16,24 @@
     <div id='plot3'></div>
     <br>
     <div id='plot4'></div>
+    <br>
+    <div id='plot7'></div>
+    <br>
+    <div id='plot8'></div>
+
     <script>
         let plot1Div = d3.select('#plot1');
         let plot2Div = d3.select('#plot2');
         let plot3Div = d3.select('#plot3');
         let plot4Div = d3.select('#plot4');
+        let plot7Div = d3.select('#plot7');
+        let plot8Div = d3.select('#plot8');
         let file = 'mammals.csv';
         let plotWidth = 500;
         let plotHeight = 500;
         let circleRadius = 5;
         let circleOpacity = 0.7;
-        
+
         d3.csv(file).then( (data) => {
             const svg = plot1Div.append('svg')
                             .attr('width', plotWidth)
@@ -53,6 +60,18 @@
                             .style('border', '1px solid black')
 
             const brainDream = svg4.append('g')
+
+            const svg7 = plot7Div.append('svg')
+                            .attr('width', plotWidth)
+                            .attr('height', plotHeight)
+                            .style('border', '1px solid black')
+            const chartArea7 = svg7.append('g');
+
+            const svg8 = plot8Div.append('svg')
+                            .attr('width', plotWidth)
+                            .attr('height', plotHeight)
+                            .style('border', '1px solid black')
+            const chartArea8 = svg8.append('g');
 
 
             // Remove NAs
@@ -87,12 +106,16 @@
             console.log(boweightRange);
             console.log(predRange);
 
+
+            const bodyWeightScale = d3.scaleLinear().domain(brweightRange).range([circleRadius, plotWidth - circleRadius]);
             const gesScale = d3.scaleLinear().domain(gesRange).range([circleRadius, plotWidth - circleRadius]);
             const sleepScale = d3.scaleLinear().domain(sleepRange).range([plotHeight - circleRadius, circleRadius]);
             const colorScale = d3.scaleLinear().domain(predRange).range(['#E41A1C', '#4DAF4A']).interpolate(d3.interpolateHcl);
             const basicXScale = d3.scaleLinear().domain([0, data.length]).range([0, plotWidth]);
             const brainScale = d3.scaleLinear().domain([brweightRange[0],680]).range([circleRadius, plotWidth - circleRadius]);
             const dreamScale = d3.scaleLinear().domain([0,maxDream]).range([plotHeight - circleRadius, circleRadius]);
+
+            // let lineGen = d3.line()
 
 
             data.forEach( (d, i) => {
@@ -104,7 +127,7 @@
                          .attr('opacity', circleOpacity)
                          .attr('index', i)
                          .style('fill', colorScale(d.pred))
-                
+
                 //
                 chartArea2.append('rect')
                           .attr('x', basicXScale(i))
@@ -112,7 +135,7 @@
                           .attr('height', gesScale(d.gestation))
                           .attr('width', plotWidth/data.length)
                           .style('fill', colorScale(d.pred))
-                
+
                 if (d.brain_wt < 700) {
                     brainSleep.append('circle')
                             .attr('cx', brainScale(d.brain_wt))
@@ -136,7 +159,20 @@
                             .attr('index', i)
                             .style('fill', 'indigo')
 
-                
+                chartArea7.append('circle')
+                        .attr('cx', bodyWeightScale(d.body_wt))
+                        .attr('cy', sleepScale(d.total_sleep))
+                        .attr('r', circleRadius)
+                        .attr('opacity', 0.4)
+                        .attr('index', i)
+                        .style('fill', colorScale(d.pred))
+
+                chartArea8.append('rect')
+                .attr('x', gesScale(d.gestation))
+                .attr('y', plotHeight - bodyWeightScale(d.body_wt))
+                .attr('height', bodyWeightScale(d.body_wt))
+                .attr('width', plotWidth/data.length)
+                .style('fill', colorScale(d.pred))
             })
         });
 
