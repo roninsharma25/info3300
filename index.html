@@ -177,8 +177,8 @@
                             .attr('index', i)
                             .style('fill', 'indigo')
 
-                // danger vs the percentage of time a mammal spends sleeping in their life
-                // animals that face less danger (their danger index is 1) will spend more of their life sleeping
+                // danger vs the percentage of time a mammal spends sleeping in their life.
+                // curious if animals that face less danger (their danger index is 1) will spend more of their life sleeping
                 let percentSleepLife = ((365*d.life_span*d.total_sleep)/(d.life_span*24*365))*100;
                 chartArea5.append('circle')
                         .attr('cx', dangerScale(d.danger))
