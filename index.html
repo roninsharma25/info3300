@@ -17,6 +17,10 @@
     <br>
     <div id='plot4'></div>
     <br>
+    <div id='plot5'></div>
+    <br>
+    <div id='plot6'></div>
+    <br>
     <div id='plot7'></div>
     <br>
     <div id='plot8'></div>
@@ -26,6 +30,8 @@
         let plot2Div = d3.select('#plot2');
         let plot3Div = d3.select('#plot3');
         let plot4Div = d3.select('#plot4');
+        let plot5Div = d3.select('#plot5');
+        let plot6Div = d3.select('#plot6');
         let plot7Div = d3.select('#plot7');
         let plot8Div = d3.select('#plot8');
         let file = 'mammals.csv';
@@ -51,15 +57,25 @@
                             .attr('width', plotWidth)
                             .attr('height', plotHeight)
                             .style('border', '1px solid black')
-
-            const brainSleep = svg3.append('g')
+            const brainSleep = svg3.append('g');
 
             const svg4 = plot4Div.append('svg')
                             .attr('width', plotWidth)
                             .attr('height', plotHeight)
                             .style('border', '1px solid black')
+            const brainDream = svg4.append('g');
 
-            const brainDream = svg4.append('g')
+            const svg5 = plot5Div.append('svg')
+                            .attr('width', plotWidth)
+                            .attr('height', plotHeight)
+                            .style('border', '1px solid black')
+            const chartArea5 = svg5.append('g');
+
+            const svg6 = plot6Div.append('svg')
+                            .attr('width', plotWidth)
+                            .attr('height', plotHeight)
+                            .style('border', '1px solid black')
+            const chartArea6 = svg6.append('g');
 
             const svg7 = plot7Div.append('svg')
                             .attr('width', plotWidth)
@@ -75,7 +91,7 @@
 
 
             // Remove NAs
-            data = data.filter( d => (d.gestation != "NA" && d.total_sleep != "NA"))
+            data = data.filter( d => (d.gestation != "NA" && d.total_sleep != "NA" && d.dreaming != "NA" && d.life_span != "NA"))
 
             // Convert strings to numbers
             data.forEach( (d) => {
@@ -114,6 +130,8 @@
             const basicXScale = d3.scaleLinear().domain([0, data.length]).range([0, plotWidth]);
             const brainScale = d3.scaleLinear().domain([brweightRange[0],680]).range([circleRadius, plotWidth - circleRadius]);
             const dreamScale = d3.scaleLinear().domain([0,maxDream]).range([plotHeight - circleRadius, circleRadius]);
+            const percentScale = d3.scaleLinear().domain([0,100]).range([plotHeight - circleRadius, circleRadius]);
+            const dangerScale = d3.scaleLinear().domain([0,6]).range([circleRadius, plotWidth - circleRadius]);
 
             // let lineGen = d3.line()
 
@@ -159,6 +177,27 @@
                             .attr('index', i)
                             .style('fill', 'indigo')
 
+                // danger vs the percentage of time a mammal spends sleeping in their life
+                // animals that face less danger (their danger index is 1) will spend more of their life sleeping
+                let percentSleepLife = ((365*d.life_span*d.total_sleep)/(d.life_span*24*365))*100;
+                chartArea5.append('circle')
+                        .attr('cx', dangerScale(d.danger))
+                        .attr('cy', percentScale(percentSleepLife))
+                        .attr('r', circleRadius)
+                        .attr('opacity', 0.4)
+                        .attr('index', i)
+                        .style('fill', 'blue')
+
+                // danger vs the percentage of time a mammal spends dreaming while they sleep
+                let percentDreamSleep = (d.dreaming/d.total_sleep)*100;
+                chartArea6.append('circle')
+                        .attr('cx', dangerScale(d.danger))
+                        .attr('cy', percentScale(percentDreamSleep))
+                        .attr('r', circleRadius)
+                        .attr('opacity', 0.4)
+                        .attr('index', i)
+                        .style('fill', 'purple')
+
                 chartArea7.append('circle')
                         .attr('cx', bodyWeightScale(d.body_wt))
                         .attr('cy', sleepScale(d.total_sleep))
@@ -168,11 +207,11 @@
                         .style('fill', colorScale(d.pred))
 
                 chartArea8.append('rect')
-                .attr('x', gesScale(d.gestation))
-                .attr('y', plotHeight - bodyWeightScale(d.body_wt))
-                .attr('height', bodyWeightScale(d.body_wt))
-                .attr('width', plotWidth/data.length)
-                .style('fill', colorScale(d.pred))
+                        .attr('x', gesScale(d.gestation))
+                        .attr('y', plotHeight - bodyWeightScale(d.body_wt))
+                        .attr('height', bodyWeightScale(d.body_wt))
+                        .attr('width', plotWidth/data.length)
+                        .style('fill', colorScale(d.pred))
             })
         });
 
