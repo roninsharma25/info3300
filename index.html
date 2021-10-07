@@ -35,17 +35,16 @@
         let plot7Div = d3.select('#plot7');
         let plot8Div = d3.select('#plot8');
         let file = 'mammals.csv';
-        let plotWidth = 500;
-        let plotHeight = 500;
+        let plotWidth = 600;
+        let plotHeight = 600;
         let circleRadius = 5;
         let circleOpacity = 0.7;
 
         d3.csv(file).then( (data) => {
-            const svg = plot1Div.append('svg')
+            const svg1 = plot1Div.append('svg')
                             .attr('width', plotWidth)
                             .attr('height', plotHeight)
-                            .style('border', '1px solid black')
-            const chartArea = svg.append('g');
+                            .attr('id', 'svg1')
 
             const svg2 = plot2Div.append('svg')
                             .attr('width', plotWidth)
@@ -124,9 +123,6 @@
 
 
             const bodyWeightScale = d3.scaleLinear().domain(brweightRange).range([circleRadius, plotWidth - circleRadius]);
-            const gesScale = d3.scaleLinear().domain(gesRange).range([circleRadius, plotWidth - circleRadius]);
-            const sleepScale = d3.scaleLinear().domain(sleepRange).range([plotHeight - circleRadius, circleRadius]);
-            const colorScale = d3.scaleLinear().domain(predRange).range(['#E41A1C', '#4DAF4A']).interpolate(d3.interpolateHcl);
             const basicXScale = d3.scaleLinear().domain([0, data.length]).range([0, plotWidth]);
             const brainScale = d3.scaleLinear().domain([brweightRange[0],680]).range([circleRadius, plotWidth - circleRadius]);
             const dreamScale = d3.scaleLinear().domain([0,maxDream]).range([plotHeight - circleRadius, circleRadius]);
@@ -135,15 +131,64 @@
             // let lineGen = d3.line()
 
 
+            // svg 1
+            let allPredation = data.map( d => d.pred );
+            let uniquePred = [...new Set(allPredation)];
+            console.log(uniquePred);
+
+            const margin = {left: 50, right: 10, top: 10, bottom: 50}
+            const padding = {bottom: 50, top: 50}
+            const gesScale = d3.scaleLinear().domain(gesRange).range([0, plotWidth]);
+            const sleepScale = d3.scaleLinear().domain(sleepRange).range([plotHeight - padding.bottom - margin.bottom, padding.top]);
+                
+            //["#e41a1c","#377eb8","#4daf4a","#984ea3","#ff7f00","#ffff33","#a65628","#f781bf","#999999"]
+            let colors = ["#377eb8", "#984ea3", "#4daf4a", "#ff7f00" ,"#e41a1c"];
+            const colorScale = d3.scaleOrdinal().domain(predRange).range(colors);
+
+            const chartArea1 = svg1.append('g')
+                                   .attr('transform', `translate(${margin.left}, ${margin.top})`)
+            
+            let bottomAxis = d3.axisBottom(gesScale);
+            let bottomAxisGroup = svg1.append('g')
+                                      .attr('class', 'x axis')
+                                      .attr('id', 'plot1-xaxis')
+                                      .attr('transform', `translate(${margin.left}, ${plotHeight - margin.top - margin.bottom})`)
+                                      .call(bottomAxis)
+            
+            let bottomAxisText = bottomAxisGroup.append('text')
+                .text('Gestation')
+                .attr('x', plotWidth/2)
+                .attr('y', padding.bottom - 10)
+                .attr('text-align', 'middle')
+                .attr('font-size', '16px')
+                .attr('fill', 'black')
+            
+            let leftAxis = d3.axisLeft(sleepScale);
+            let leftAxisGroup = svg1.append('g')
+                                    .attr('class', 'y axis')
+                                    .attr('id', 'plot1-yaxis')
+                                    .attr('transform', `translate(${margin.left - 10}, ${margin.top})`)
+                                    .call(leftAxis)
+
+            let circles = chartArea1.selectAll('circle')
+                                    .data(data)
+                                    .join('circle')
+                                    .attr('cx', d => gesScale(d.gestation))
+                                    .attr('cy', d => sleepScale(d.total_sleep))
+                                    .attr('r', circleRadius)
+                                    .attr('opacity', circleOpacity)
+                                    .attr('id', 'svg1')
+                                    .style('fill', d => colorScale(d.pred))
+
             data.forEach( (d, i) => {
                 // Gestation vs. total_sleep, stratified by predation
-                chartArea.append('circle')
-                         .attr('cx', gesScale(d.gestation))
-                         .attr('cy', sleepScale(d.total_sleep))
-                         .attr('r', circleRadius)
-                         .attr('opacity', circleOpacity)
-                         .attr('index', i)
-                         .style('fill', colorScale(d.pred))
+                // chartArea1.append('circle')
+                //          .attr('cx', gesScale(d.gestation))
+                //          .attr('cy', sleepScale(d.total_sleep))
+                //          .attr('r', circleRadius)
+                //          .attr('opacity', circleOpacity)
+                //          .attr('index', i)
+                //          .style('fill', colorScale(d.pred))
 
                 //
                 chartArea2.append('rect')
