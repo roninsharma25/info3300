@@ -142,7 +142,7 @@
             const sleepScale = d3.scaleLinear().domain(sleepRange).range([plotHeight - padding.bottom - margin.bottom, padding.top]);
                 
             //["#e41a1c","#377eb8","#4daf4a","#984ea3","#ff7f00","#ffff33","#a65628","#f781bf","#999999"]
-            let colors = ["#377eb8", "#984ea3", "#4daf4a", "#ff7f00" ,"#e41a1c"];
+            let colors = ["#377eb8", "#984ea3", "#4daf4a", "#ff7f00" ,"#e41a1c"]; // update to have red as the highest predation
             const colorScale = d3.scaleOrdinal().domain(predRange).range(colors);
 
             const chartArea1 = svg1.append('g')
@@ -152,7 +152,7 @@
             let bottomAxisGroup = svg1.append('g')
                                       .attr('class', 'x axis')
                                       .attr('id', 'plot1-xaxis')
-                                      .attr('transform', `translate(${margin.left}, ${plotHeight - margin.top - margin.bottom})`)
+                                      .attr('transform', `translate(${margin.left}, ${plotHeight - margin.top - margin.bottom - 10})`)
                                       .call(bottomAxis)
             
             let bottomAxisText = bottomAxisGroup.append('text')
@@ -169,16 +169,49 @@
                                     .attr('id', 'plot1-yaxis')
                                     .attr('transform', `translate(${margin.left - 10}, ${margin.top})`)
                                     .call(leftAxis)
-
-            let circles = chartArea1.selectAll('circle')
+            
+            // Reference: https://www.d3indepth.com/shapes/
+            let symbolCreator = d3.symbol().size(100);
+            let symbolTypes = ['symbolCircle', 'symbolDiamond', 'symbolSquare', 'symbolStar', 'symbolTriangle']
+            let symbols = chartArea1.selectAll('path')
                                     .data(data)
-                                    .join('circle')
-                                    .attr('cx', d => gesScale(d.gestation))
-                                    .attr('cy', d => sleepScale(d.total_sleep))
-                                    .attr('r', circleRadius)
-                                    .attr('opacity', circleOpacity)
-                                    .attr('id', 'svg1')
+                                    .join('path')
+                                    .attr('id', 'svg1data')
+                                    .attr('transform', d => `translate(${gesScale(d.gestation)}, ${sleepScale(d.total_sleep)})`)
+                                    .attr('d', function(d) { 
+                                        symbolCreator.type(d3[symbolTypes[d.pred-1]]); // account for array indexing
+                                        return symbolCreator();
+                                    })
                                     .style('fill', d => colorScale(d.pred))
+
+            let predation = [1, 2, 3, 4, 5];
+            predation.forEach( (d, i) => {
+                chartArea1.append('path')
+                          .attr('transform', d => `translate(${plotWidth - 175}, ${margin.top + padding.top + 20 + i * 25})`)
+                          .attr('d', function(d) { 
+                                        symbolCreator.type(d3[symbolTypes[i]]);
+                                        return symbolCreator();
+                          })
+                          .style('fill', d => colorScale(i + 1)) // account for predation ranging from 1 to 5
+                chartArea1.append('text')
+                          .attr('transform', d => `translate(${plotWidth - 160}, ${margin.top + padding.top + 24 + i * 25})`)
+                          .text(predation[i])
+            })
+
+            // Legend header
+            chartArea1.append('text')
+                      .attr('transform', d => `translate(${plotWidth - 195}, ${margin.top + padding.top})`)
+                      .text('Predation')
+
+            // let circles = chartArea1.selectAll('circle')
+            //                         .data(data)
+            //                         .join('circle')
+            //                         .attr('cx', d => gesScale(d.gestation))
+            //                         .attr('cy', d => sleepScale(d.total_sleep))
+            //                         .attr('r', circleRadius)
+            //                         .attr('opacity', circleOpacity)
+            //                         .attr('id', 'svg1')
+            //                         .style('fill', d => colorScale(d.pred))
 
             data.forEach( (d, i) => {
                 // Gestation vs. total_sleep, stratified by predation
