@@ -6,6 +6,11 @@
         .gridlines .domain {
             stroke: none;
         }
+
+        #svg9 {
+            left: 250;
+            position: absolute;
+        }
     </style>
 </head>
 <body>
@@ -42,6 +47,9 @@
         let plotHeight = 600;
         let circleRadius = 5;
         let circleOpacity = 0.7;
+
+        let lollipopPlotWidth = 700;
+        let lollipopPlotHeight = 700;
 
         d3.csv(file).then( (data) => {
             const svg1 = plot1Div.append('svg')
@@ -92,10 +100,11 @@
             const chartArea8 = svg8.append('g');
 
             const svg9 = plot9Div.append('svg')
-                            .attr('width', plotWidth)
-                            .attr('height', plotHeight)
+                            .attr('width', lollipopPlotWidth)
+                            .attr('height', lollipopPlotHeight)
                             .attr('id', 'svg9')
-            const chartArea9 = svg9.append('g');
+                            .style('border', '1px solid black')
+            const chartArea9 = svg9.append('g')
 
 
             // Remove NAs
@@ -116,8 +125,6 @@
             console.log(data[0].brain_wt)
             const gesRange = d3.extent( data, d => d.gestation);
             const sleepRange = d3.extent( data, d => d.total_sleep);
-            const brweightRange = d3.extent( data, d => d.brain_wt);
-            const boweightRange = d3.extent( data, d => d.body_wt);
             const dreamRange = d3.extent( data, d => d.dreaming);
             const nondreamRange = d3.extent( data, d => d.non_dreaming);
 
@@ -126,10 +133,7 @@
             const predRange = d3.extent( data, d => d.pred);
             console.log(gesRange);
             console.log(sleepRange);
-            console.log(brweightRange);
-            console.log(boweightRange);
             console.log(predRange);
-
 
             const basicXScale = d3.scaleLinear().domain([0, data.length]).range([0, plotWidth]);
             const dreamScale = d3.scaleLinear().domain([0,maxDream]).range([plotHeight - circleRadius, circleRadius]);
@@ -220,57 +224,73 @@
             //                         .attr('id', 'svg1')
             //                         .style('fill', d => colorScale(d.pred))
 
-            // Chart 9
+            // Chart 9 -- lollipop chart code adapted from the lecture code
+            // Left - body
+            // Right - brain
+            let brainSorted = data.sort( (a,b) =>  d3.ascending(a.brain_wt, b.brain_wt) );
+            let data2 = brainSorted.slice(0,-10); // Remove 10 largest brain weights
+            let bodySorted = data2.sort( (a,b) =>  d3.descending(a.body_wt, b.body_wt) );
+            let data3 = bodySorted.slice(0, -10); // Remove 10 smallest body weights
+
+            const brweightRange = d3.extent( data3, d => d.brain_wt);
+            const boweightRange = d3.extent( data3, d => d.body_wt);
             console.log("Range");
             console.log(boweightRange);
             console.log("Range 2");
             console.log(brweightRange);
-            const bodyWeightScale = d3.scaleLog().domain(boweightRange).range([0, plotWidth/2]);
-            const brainWeightScale = d3.scaleLog().domain(brweightRange).range([plotWidth/2, plotWidth]);
+
+            // Log cause there are some relatively large values
+            // Linear makes many of the lines extremely small
+            // Tradeoff with the exponential jump near the bottom of the plot (length increase is not intuitive)
+            const bodyWeightScale = d3.scaleLog().domain(boweightRange).range([lollipopPlotWidth/2, 200]);
+            const brainWeightScale = d3.scaleLog().domain(brweightRange).range([lollipopPlotWidth/2, lollipopPlotWidth - 200]);
             
-            let medianLifeSpan = d3.median(data, d => d.life_span);
+            let medianLifeSpan = d3.median(data, d => d.life_span); // use the entire dataset to calculate the median
             console.log(medianLifeSpan);
             let medianLifeSpanColors = ['red', 'green'];
 
-            let species = [...new Set(data.map( d => d.species ))];
-            const speciesScale = d3.scalePoint().domain(species).range([plotHeight, 0]);
+            let species = [...new Set(data3.map( d => d.species ))]; // use data subset
+            const speciesScale = d3.scalePoint().domain(species).range([lollipopPlotHeight - 400, 10]);
             console.log(species);
+            // plotHeight - padding.bottom - margin.bottom, padding.top
 
-            let lollipops = chartArea9.selectAll('g.lollipop').data( data, d => d.species)
+            let lollipops = chartArea9.selectAll('g.lollipop').data( data3, d => d.species)
 							.join('g')
 							.attr('class', 'lollipop')
 							.attr('transform', d => `translate(0,${speciesScale(d.species)})`);
 
-            let lollipops2 = chartArea9.selectAll('g.lollipop2').data( data, d => d.species)
+            let lollipops2 = chartArea9.selectAll('g.lollipop2').data( data3, d => d.species)
 							.join('g')
 							.attr('class', 'lollipop2')
 							.attr('transform', d => `translate(0,${speciesScale(d.species)})`);
             
             // Middle
             chartArea9.append('line')
-                .attr('x1', plotWidth/2)
-                .attr('x2', plotWidth/2)
+                .attr('x1', lollipopPlotWidth/2)
+                .attr('x2', lollipopPlotWidth/2)
                 .attr('y1', 0)
-                .attr('y2', plotHeight)
+                .attr('y2', lollipopPlotHeight - 80)
                 .attr('stroke', 'black')
             
             // Left half: body weight
             lollipops.append('line')
                 .attr('class', 'stick')
-                .attr('x1', plotWidth/2)
+                .attr('x1', lollipopPlotWidth/2)
                 .attr('x2', d => bodyWeightScale(d.body_wt))
                 .attr('y1', d => speciesScale(d.species))
                 .attr('y2', d => speciesScale(d.species))
                 .attr('stroke', d => medianLifeSpanColors[Number(d.life_span > medianLifeSpan)]) // green if above median life span, otherwise red
-            
+                .attr('stroke-width', d => Number(d.life_span < medianLifeSpan) * 2 + 1) // thicker if red
+
             // Right half: brain weight
             lollipops2.append('line')
                 .attr('class', 'stick')
-                .attr('x1', plotWidth/2)
+                .attr('x1', lollipopPlotWidth/2)
                 .attr('x2', d => brainWeightScale(d.brain_wt))
                 .attr('y1', d => speciesScale(d.species))
                 .attr('y2', d => speciesScale(d.species))
                 .attr('stroke', d => medianLifeSpanColors[Number(d.life_span > medianLifeSpan)])
+                .attr('stroke-width', d => Number(d.life_span < medianLifeSpan) * 2 + 1) // thicker if red
             
             lollipops.append('circle')
                 .attr('class', 'pop')
@@ -285,6 +305,28 @@
                 .attr('cx', d => brainWeightScale(d.brain_wt))
                 .attr('cy', d => speciesScale(d.species))
                 .attr('fill', d => medianLifeSpanColors[Number(d.life_span > medianLifeSpan)])
+            
+            // Add text
+            lollipops.append('text')
+                     .attr('class', 'lollipip-text')
+                     .attr('x', d => bodyWeightScale(d.body_wt) - 7)
+                     .attr('y', d => speciesScale(d.species))
+                     .text(d => d.body_wt)
+                     .attr('text-anchor', 'end')
+                     .attr('dominant-baseline', 'middle')
+                     .attr('font-size', '14px')
+                     .attr('fill', 'black')
+            
+            lollipops2.append('text')
+                      .attr('class', 'lollipip-text')
+                      .attr('x', d => brainWeightScale(d.brain_wt) + 7)
+                      .attr('y', d => speciesScale(d.species))
+                      .text(d => d.brain_wt)
+                      .attr('text-anchor', 'start')
+                      .attr('dominant-baseline', 'middle')
+                      .attr('font-size', '14px')
+                      .attr('fill', 'black')
+
 
             data.forEach( (d, i) => {
                 // Gestation vs. total_sleep, stratified by predation
