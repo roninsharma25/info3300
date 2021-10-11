@@ -30,6 +30,8 @@
     <br>
     <div id='plot8'></div>
     <br>
+    <div id='plot10'></div>
+    <br>
     <div id='plot9'></div>
 
     <script>
@@ -41,6 +43,7 @@
         let plot6Div = d3.select('#plot6');
         let plot7Div = d3.select('#plot7');
         let plot8Div = d3.select('#plot8');
+        let plot10Div = d3.select('#plot10');
         let plot9Div = d3.select('#plot9');
         let file = 'mammals.csv';
         let plotWidth = 600;
@@ -152,47 +155,6 @@
                             .attr('height', plotHeight)
                             .attr('id', 'svg1')
 
-            const svg2 = plot2Div.append('svg')
-                            .attr('width', plotWidth)
-                            .attr('height', plotHeight)
-                            .style('border', '1px solid black')
-            const chartArea2 = svg2.append('g');
-
-            const svg3 = plot3Div.append('svg')
-                            .attr('width', plotWidth)
-                            .attr('height', plotHeight)
-                            .style('border', '1px solid black')
-            const brainSleep = svg3.append('g');
-
-            const svg4 = plot4Div.append('svg')
-                            .attr('width', plotWidth)
-                            .attr('height', plotHeight)
-                            .style('border', '1px solid black')
-            const brainDream = svg4.append('g');
-
-            const svg5 = plot5Div.append('svg')
-                            .attr('width', plotWidth)
-                            .attr('height', plotHeight)
-                            .style('border', '1px solid black')
-            const chartArea5 = svg5.append('g');
-
-            const svg6 = plot6Div.append('svg')
-                            .attr('width', plotWidth)
-                            .attr('height', plotHeight)
-                            .style('border', '1px solid black')
-            const chartArea6 = svg6.append('g');
-
-            const svg7 = plot7Div.append('svg')
-                            .attr('width', plotWidth)
-                            .attr('height', plotHeight)
-                            .style('border', '1px solid black')
-            const chartArea7 = svg7.append('g');
-
-            // const svg8 = plot8Div.append('svg')
-            //                 .attr('width', plotWidth)
-            //                 .attr('height', plotHeight)
-            //                 .style('border', '1px solid black')
-            // const chartArea8 = svg8.append('g');
 
             const svg9 = plot9Div.append('svg')
                             .attr('width', lollipopPlotWidth)
@@ -200,7 +162,7 @@
                             .attr('id', 'svg9')
                             .style('border', '1px solid black')
             const chartArea9 = svg9.append('g')
-                                   .attr('transform', 'translate(0, 50)')
+                                   .attr('transform', 'translate(0, 50)');
 
 
             // Remove NAs
@@ -240,6 +202,74 @@
             const percentScale = d3.scaleLinear().domain([0,100]).range([plotHeight - circleRadius, circleRadius]);
 
             // let lineGen = d3.line()
+
+            // svg10 -> final plot 3 START -------------------------------------
+            // svg element for final 3rd plot
+            const margin2 = {top: 20, right: 20, bottom: 20, left: 20};
+
+            const svg10 = plot10Div.append('svg')
+                            .attr('width', plotWidth)
+                            .attr('height', plotHeight)
+                            .style('border', '1px solid black')
+            const chartArea10 = svg10.append('g')
+                            .attr('transform', `translate(${margin2.left},${margin2.top})`);
+
+            // TODO
+            // let stats = d3.nest
+            //     .key(data, d => d.pred)
+            //     .rollup(function(d) {
+            //       q1 = d3.quantile(d.map(function(g) { return d.total_sleep;}).sort(d3.ascending),.25)
+            //       median = d3.quantile(d.map(function(g) { return d.total_sleep;}).sort(d3.ascending),.5)
+            //       q3 = d3.quantile(d.map(function(g) { return d.total_sleep;}).sort(d3.ascending),.75)
+            //       interQuantileRange = q3 - q1
+            //       min = q1 - 1.5 * interQuantileRange
+            //       max = q3 + 1.5 * interQuantileRange
+            //       return({q1: q1, median: median, q3: q3, interQuantileRange: interQuantileRange, min: min, max: max})
+            //     })
+            //     .entries(data)
+            //
+            // // Show the X scale
+            // var x = d3.scaleBand()
+            //   .range([ 0, width ])
+            //   .domain(["setosa", "versicolor", "virginica"])
+            //   .paddingInner(1)
+            //   .paddingOuter(.5)
+            // chartArea10.append("g")
+            //   .attr("transform", "translate(0," + height + ")")
+            //   .call(d3.axisBottom(x))
+            //
+            // // Show the Y scale
+            // var y = d3.scaleLinear()
+            //   .domain([3,9])
+            //   .range([height, 0])
+            // chartArea10.append("g").call(d3.axisLeft(y))
+            //
+            // // Show the main vertical line
+            // chartArea10.selectAll("vertLines")
+            //            .data(statsInfo)
+            //            .enter()
+            //            .append("line")
+            //                 .attr("x1", function(d){return(x(d.key))})
+            //                 .attr("x2", function(d){return(x(d.key))})
+            //                 .attr("y1", function(d){return(y(d.value.min))})
+            //                 .attr("y2", function(d){return(y(d.value.max))})
+            //                 .attr("stroke", "black")
+            //                 .style("width", 40)
+            //
+            // // rectangle for the main box
+            // var boxWidth = 100
+            // chartArea10.selectAll("boxes")
+            //            .data(statsInfo)
+            //            .enter()
+            //            .append("rect")
+            //                 .attr("x", function(d){return(x(d.key)-boxWidth/2)})
+            //                 .attr("y", function(d){return(y(d.value.q3))})
+            //                 .attr("height", function(d){return(y(d.value.q1)-y(d.value.q3))})
+            //                 .attr("width", boxWidth )
+            //                 .attr("stroke", "black")
+            //                 .style("fill", "#69b3a2")
+
+            // svg10 -> final plot 3 END ---------------------------------------
 
 
             // svg 1
@@ -569,71 +599,8 @@
                 //          .style('fill', colorScale(d.pred))
 
                 //
-                chartArea2.append('rect')
-                          .attr('x', basicXScale(i))
-                          .attr('y', plotHeight - gesScale(d.gestation))
-                          .attr('height', gesScale(d.gestation))
-                          .attr('width', plotWidth/data.length)
-                          .style('fill', colorScale(d.pred))
 
-                if (d.brain_wt < 700) {
-                    brainSleep.append('circle')
-                            .attr('cx', brainWeightScale(d.brain_wt))
-                            .attr('cy', sleepScale(d.total_sleep))
-                            .attr('r', circleRadius)
-                            .attr('index', i)
-                            .style('fill', 'indigo')
-                }
 
-                brainDream.append('circle')
-                            .attr('cx', brainWeightScale(d.brain_wt))
-                            .attr('cy', dreamScale(d.dreaming))
-                            .attr('r', circleRadius)
-                            .attr('index', i)
-                            .style('fill', 'orange')
-
-                brainDream.append('circle')
-                            .attr('cx', brainWeightScale(d.brain_wt))
-                            .attr('cy', dreamScale(d.non_dreaming))
-                            .attr('r', circleRadius)
-                            .attr('index', i)
-                            .style('fill', 'indigo')
-
-                // brain weight vs the percentage of time a mammal spends sleeping in their life.
-                // curious if mammals that have a certain brain weight will spend more of their life sleeping
-                let percentSleepLife = ((365*d.life_span*d.total_sleep)/(d.life_span*24*365))*100;
-                chartArea5.append('circle')
-                        .attr('cx', brainWeightScale(d.brain_wt))
-                        .attr('cy', percentScale(percentSleepLife))
-                        .attr('r', circleRadius)
-                        .attr('opacity', 0.4)
-                        .attr('index', i)
-                        .style('fill', 'blue')
-
-                // weight vs the percentage of time a mammal spends dreaming while they sleep
-                let percentDreamSleep = (d.dreaming/d.total_sleep)*100;
-                chartArea6.append('circle')
-                        .attr('cx', brainWeightScale(d.brain_wt))
-                        .attr('cy', percentScale(percentDreamSleep))
-                        .attr('r', circleRadius)
-                        .attr('opacity', 0.4)
-                        .attr('index', i)
-                        .style('fill', 'purple')
-
-                chartArea7.append('circle')
-                        .attr('cx', bodyWeightScale(d.body_wt))
-                        .attr('cy', sleepScale(d.total_sleep))
-                        .attr('r', circleRadius)
-                        .attr('opacity', 0.4)
-                        .attr('index', i)
-                        .style('fill', colorScale(d.pred))
-
-                // chartArea8.append('rect')
-                //         .attr('x', gesScale(d.gestation))
-                //         .attr('y', plotHeight - bodyWeightScale(d.body_wt))
-                //         .attr('height', bodyWeightScale(d.body_wt))
-                //         .attr('width', plotWidth/data.length)
-                //         .style('fill', colorScale(d.pred))
             })
 
         });
