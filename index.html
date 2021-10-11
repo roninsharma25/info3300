@@ -105,6 +105,7 @@
                             .attr('id', 'svg9')
                             .style('border', '1px solid black')
             const chartArea9 = svg9.append('g')
+                                   .attr('transform', 'translate(0, 50)')
 
 
             // Remove NAs
@@ -227,6 +228,105 @@
             // Chart 9 -- lollipop chart code adapted from the lecture code
             // Left - body
             // Right - brain
+
+            // Title
+            chartArea9.append('text')
+                      .attr('class', 'lollipop-title')
+                      .attr('x', lollipopPlotWidth/2)
+                      .attr('y', -20)
+                      .text('Mammal Body and Brain Weight Distributions')
+                      .attr('text-anchor', 'middle')
+                      .attr('dominant-baseline', 'middle')
+                      .attr('font-size', '30px')
+                      .attr('fill', 'black')
+                      .attr('font-weight', 'bold')
+            
+            // Two section headers
+            chartArea9.append('text')
+                      .attr('class', 'lollipop-section1')
+                      .attr('x', lollipopPlotWidth/2 - 50)
+                      .attr('y', 10)
+                      .text('Body Weight (kg)')
+                      .attr('text-anchor', 'end')
+                      .attr('dominant-baseline', 'middle')
+                      .attr('font-size', '16px')
+                      .attr('fill', 'black')
+            
+            chartArea9.append('text')
+                      .attr('class', 'lollipop-section2')
+                      .attr('x', lollipopPlotWidth/2 + 50)
+                      .attr('y', 10)
+                      .text('Brain Weight (kg)')
+                      .attr('text-anchor', 'start')
+                      .attr('dominant-baseline', 'middle')
+                      .attr('font-size', '16px')
+                      .attr('fill', 'black')
+            
+            // Figure description
+            chartArea9.append('text')
+                      .attr('class', 'lollipop-description')
+                      .attr('x', lollipopPlotWidth/2)
+                      .attr('y', lollipopPlotHeight - 70)
+                      .text('This plot shows the body and brain weight distributions for a  ' +
+                            '22 mammal subset of the dataset.')
+                      .attr('text-anchor', 'middle')
+                      .attr('dominant-baseline', 'middle')
+                      .attr('font-size', '16px')
+                      .attr('fill', 'black')
+            
+            // Outer rectangle
+            chartArea9.append('rect')
+                      .attr('x', lollipopPlotWidth/2 - 200)
+                      .attr('y', 20)
+                      .attr('height', lollipopPlotHeight - 105)
+                      .attr('width', 400)
+                      .style('fill', 'white')
+                      .style('stroke', '#ccc')
+                      .style('stroke-width', 2)
+            
+            // Legend
+            chartArea9.append('text')
+                      .attr('x', lollipopPlotWidth - 75)
+                      .attr('y', 28)
+                      .text('Legend')
+                      .attr('text-anchor', 'middle')
+                      .attr('dominant-baseline', 'middle')
+                      .attr('font-size', '18px')
+                      .attr('fill', 'black')
+                      .attr('font-weight', 'bold')
+            
+            chartArea9.append('rect')
+                      .attr('x', lollipopPlotWidth - 140)
+                      .attr('y', 50)
+                      .attr('height', 20)
+                      .attr('width', 20)
+                      .style('fill', 'green')
+            
+            chartArea9.append('text')
+                      .attr('x', lollipopPlotWidth - 60)
+                      .attr('y', 60)
+                      .text('> Median Life Span')
+                      .attr('text-anchor', 'middle')
+                      .attr('dominant-baseline', 'middle')
+                      .attr('font-size', '14px')
+                      .attr('fill', 'black')
+
+            chartArea9.append('rect')
+                      .attr('x', lollipopPlotWidth - 140)
+                      .attr('y', 80)
+                      .attr('height', 20)
+                      .attr('width', 20)
+                      .style('fill', 'red')
+
+            chartArea9.append('text')
+                      .attr('x', lollipopPlotWidth - 60)
+                      .attr('y', 92)
+                      .text('< Median Life Span')
+                      .attr('text-anchor', 'middle')
+                      .attr('dominant-baseline', 'middle')
+                      .attr('font-size', '14px')
+                      .attr('fill', 'black')
+
             let brainSorted = data.sort( (a,b) =>  d3.ascending(a.brain_wt, b.brain_wt) );
             let data2 = brainSorted.slice(0,-10); // Remove 10 largest brain weights
             let bodySorted = data2.sort( (a,b) =>  d3.descending(a.body_wt, b.body_wt) );
@@ -239,6 +339,11 @@
             console.log("Range 2");
             console.log(brweightRange);
 
+            let speciesSubset = [];
+            data3.forEach( (d) => {
+                speciesSubset.push(d.species);
+            })
+
             // Log cause there are some relatively large values
             // Linear makes many of the lines extremely small
             // Tradeoff with the exponential jump near the bottom of the plot (length increase is not intuitive)
@@ -250,9 +355,24 @@
             let medianLifeSpanColors = ['red', 'green'];
 
             let species = [...new Set(data3.map( d => d.species ))]; // use data subset
-            const speciesScale = d3.scalePoint().domain(species).range([lollipopPlotHeight - 400, 10]);
+            console.log(species)
+
+            // Cleaned species' names to make the plot more legible
+            let cleanedSpecies = ['Rat', 'Chinchilla', 'Owl Monkey', 'Rock Hyrax I', 'European Hedgehog',
+                           'Tenrec', 'African Giant Pouched Rat', 'Guinea Pig', 'Phalanger',
+                           'North American Possum', 'Tree Hyrax', 'Rabbit', 'Echidna',
+                           'Cat', 'Nine-Banded Armadillo', 'Water Opossum', 'Rock Hyrax II',
+                           'Vervet', 'Red Fox', 'Patas Monkey', 'Goat', 'Brazilian Tapir'].reverse();
+
+            // Create a JSON mapping the dataset species' labels to the cleaned names
+            let speciesLabels = {};
+            species.forEach( (d, i) => {
+                speciesLabels[d] = cleanedSpecies[i];
+            })
+            console.log(speciesLabels);
+
+            const speciesScale = d3.scalePoint().domain(species).range([lollipopPlotHeight - 400, 20]);
             console.log(species);
-            // plotHeight - padding.bottom - margin.bottom, padding.top
 
             let lollipops = chartArea9.selectAll('g.lollipop').data( data3, d => d.species)
 							.join('g')
@@ -268,8 +388,8 @@
             chartArea9.append('line')
                 .attr('x1', lollipopPlotWidth/2)
                 .attr('x2', lollipopPlotWidth/2)
-                .attr('y1', 0)
-                .attr('y2', lollipopPlotHeight - 80)
+                .attr('y1', 20)
+                .attr('y2', lollipopPlotHeight - 100)
                 .attr('stroke', 'black')
             
             // Left half: body weight
@@ -307,8 +427,8 @@
                 .attr('fill', d => medianLifeSpanColors[Number(d.life_span > medianLifeSpan)])
             
             // Add text
-            lollipops.append('text')
-                     .attr('class', 'lollipip-text')
+            let leftText = lollipops.append('text')
+                     .attr('class', 'lollipop-text')
                      .attr('x', d => bodyWeightScale(d.body_wt) - 7)
                      .attr('y', d => speciesScale(d.species))
                      .text(d => d.body_wt)
@@ -326,6 +446,16 @@
                       .attr('dominant-baseline', 'middle')
                       .attr('font-size', '14px')
                       .attr('fill', 'black')
+            
+            lollipops.append('text')
+                     .attr('class', 'species-text')
+                     .attr('x', 140)
+                     .attr('y', d => speciesScale(d.species))
+                     .text(d => speciesLabels[d.species]) // referened the JSON for the cleaned species' names
+                     .attr('text-anchor', 'end')
+                     .attr('dominant-baseline', 'middle')
+                     .attr('font-size', '12px')
+                     .attr('fill', 'black')
 
 
             data.forEach( (d, i) => {
