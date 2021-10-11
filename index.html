@@ -51,49 +51,96 @@
         let lollipopPlotWidth = 700;
         let lollipopPlotHeight = 700;
 
-        const svg8 = plot8Div.append('svg')
-                            .attr('width', plotWidth)
-                            .attr('height', plotHeight)
-                            .style('border', '1px solid black')
-        const chartArea8 = svg8.append('g');
+
 
 
         // Plot 8 horizontal bar chart
         const render = data => {
 
-        const margin = {left: 350, right: 10, top: 10, bottom: 50}
+        const margin = {left: 500, right: 10, top: 50, bottom: 10}
         const innerWidth = plotWidth - margin.left-margin.right;
         const innerHeight = plotHeight - margin.top-margin.bottom;
         const dreamRange = d3.extent( data, d => d.dreaming);
         const nonDreamRange = d3.extent( data, d => d.non_dreaming);
-        const dreamScale = d3.scaleLinear().domain([0, dreamRange[1]]).range([0, innerWidth]);
-        const nonDreamScale = d3.scaleLinear().domain([0, nonDreamRange[1]]).range([50, 150]);
+        const dreamScale = d3.scaleLinear().domain([0, dreamRange[1]]).range([50, 200]);
+        const nonDreamScale = d3.scaleLinear().domain([0, nonDreamRange[1]]).range([50, 200]);
         const yScale = d3.scaleBand().domain(data.map(d => d.species)).range([0, innerHeight])
 
-        const g = svg8.append('g')
-            .attr('transform', `translate(${margin.left}, ${margin.top})`)
+        const svg8 = plot8Div.append('svg')
+                            .attr('width', 750)
+                            .attr('height', plotHeight)
+                            .style('border', '1px solid black')
+        const chartArea8 = svg8.append('g')
+            .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
-             g.append('g').call(d3.axisLeft(yScale))
+        chartArea8.append('g').call(d3.axisLeft(yScale))
+
 
             // left rectangle
-            svg8.selectAll("rect").data(data)
+            chartArea8.selectAll("rect.left").data(data)
                 .enter().append("rect")
-                .attr('transform', `translate(${margin.top}+10)`)
+                .attr('transform', `translate(${margin.left - 620})`)
+                .attr("x", d => ( - nonDreamScale(d.non_dreaming)))
                 .attr('y', d => yScale(d.species))
                 .attr("class", "left")
                 .attr('width', d => (nonDreamScale(d.non_dreaming)))
                 .attr('height', yScale.bandwidth())
                 .style("fill", "green")
 
+            // Rectangle Text
+            chartArea8.selectAll("text.leftscore")
+                .data(data)
+                .enter().append("text")
+                .attr("x",  d => (-nonDreamScale(d.non_dreaming)))
+                .attr("y", d => yScale(d.species))
+                .attr("dx", "-130")
+                .attr("dy", ".96em")
+                .attr('font-size', '10px')
+                .attr("text-anchor", "middle")
+                .attr('class', 'leftscore')
+                .text(d => d['non_dreaming']);
+
+
                 // right rectangle
-            g.selectAll("rect").data(data)
+            chartArea8.selectAll("rect.right").data(data)
                 .enter().append("rect")
                 .attr('y', d => yScale(d.species))
                 .attr("class", "right")
-                .text('Body Weight (kg)')
                 .attr('width', d =>  dreamScale(d.dreaming))
                 .attr('height', yScale.bandwidth())
                 .style("fill", "blue")
+
+            //right Rectangle value
+            chartArea8.selectAll("text.rightscore")
+                .data(data)
+                .enter().append("text")
+                .attr("x",  d => (dreamScale(d.dreaming) +20))
+                .attr("y", d => yScale(d.species))
+                .attr("dx", -12)
+                .attr("dy", ".96em")
+                .attr("text-anchor", "middle")
+                .attr('font-size', '10px')
+                .attr('class', 'rightscore')
+                .text(d => d['dreaming']);
+
+                // Chart titles
+                chartArea8.append("text").attr("x",60).attr("y", -20)
+                .attr("class","title").text("Dreaming")
+                .attr('text-anchor', 'middle')
+                      .attr('dominant-baseline', 'middle')
+                      .attr('font-size', '30px')
+                      .attr('fill', 'black')
+                      .attr('font-weight', 'bold');
+
+
+                chartArea8.append("text").attr("x",-220).attr("y", -20)
+                .attr("class","title").text("Non-Dreaming")
+                .attr('text-anchor', 'middle')
+                      .attr('dominant-baseline', 'middle')
+                      .attr('font-size', '30px')
+                      .attr('fill', 'black')
+                      .attr('font-weight', 'bold');
+
 
         };
 
