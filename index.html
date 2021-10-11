@@ -51,6 +51,52 @@
         let lollipopPlotWidth = 700;
         let lollipopPlotHeight = 700;
 
+        const svg8 = plot8Div.append('svg')
+                            .attr('width', plotWidth)
+                            .attr('height', plotHeight)
+                            .style('border', '1px solid black')
+        const chartArea8 = svg8.append('g');
+
+
+        // Plot 8 horizontal bar chart
+        const render = data => {
+
+        const margin = {left: 350, right: 10, top: 10, bottom: 50}
+        const innerWidth = plotWidth - margin.left-margin.right;
+        const innerHeight = plotHeight - margin.top-margin.bottom;
+        const dreamRange = d3.extent( data, d => d.dreaming);
+        const nonDreamRange = d3.extent( data, d => d.non_dreaming);
+        const dreamScale = d3.scaleLinear().domain([0, dreamRange[1]]).range([0, innerWidth]);
+        const nonDreamScale = d3.scaleLinear().domain([0, nonDreamRange[1]]).range([50, 150]);
+        const yScale = d3.scaleBand().domain(data.map(d => d.species)).range([0, innerHeight])
+
+        const g = svg8.append('g')
+            .attr('transform', `translate(${margin.left}, ${margin.top})`)
+
+             g.append('g').call(d3.axisLeft(yScale))
+
+            // left rectangle
+            svg8.selectAll("rect").data(data)
+                .enter().append("rect")
+                .attr('transform', `translate(${margin.top}+10)`)
+                .attr('y', d => yScale(d.species))
+                .attr("class", "left")
+                .attr('width', d => (nonDreamScale(d.non_dreaming)))
+                .attr('height', yScale.bandwidth())
+                .style("fill", "green")
+
+                // right rectangle
+            g.selectAll("rect").data(data)
+                .enter().append("rect")
+                .attr('y', d => yScale(d.species))
+                .attr("class", "right")
+                .text('Body Weight (kg)')
+                .attr('width', d =>  dreamScale(d.dreaming))
+                .attr('height', yScale.bandwidth())
+                .style("fill", "blue")
+
+        };
+
         d3.csv(file).then( (data) => {
             const svg1 = plot1Div.append('svg')
                             .attr('width', plotWidth)
@@ -93,11 +139,11 @@
                             .style('border', '1px solid black')
             const chartArea7 = svg7.append('g');
 
-            const svg8 = plot8Div.append('svg')
-                            .attr('width', plotWidth)
-                            .attr('height', plotHeight)
-                            .style('border', '1px solid black')
-            const chartArea8 = svg8.append('g');
+            // const svg8 = plot8Div.append('svg')
+            //                 .attr('width', plotWidth)
+            //                 .attr('height', plotHeight)
+            //                 .style('border', '1px solid black')
+            // const chartArea8 = svg8.append('g');
 
             const svg9 = plot9Div.append('svg')
                             .attr('width', lollipopPlotWidth)
@@ -109,7 +155,11 @@
 
 
             // Remove NAs
-            data = data.filter( d => (d.gestation != "NA" && d.total_sleep != "NA" && d.dreaming != "NA" && d.life_span != "NA"))
+            data = data.filter( d => (d.gestation != "NA" && d.total_sleep != "NA" && d.dreaming != "NA" && d.life_span != "NA" && d.non_dreaming != "NA"))
+
+            // Plot 8 function
+            render(data)
+
 
             // Convert strings to numbers
             data.forEach( (d) => {
@@ -152,21 +202,21 @@
             const padding = {bottom: 50, top: 50}
             const gesScale = d3.scaleLinear().domain(gesRange).range([0, plotWidth]);
             const sleepScale = d3.scaleLinear().domain(sleepRange).range([plotHeight - padding.bottom - margin.bottom, padding.top]);
-                
+
             //["#e41a1c","#377eb8","#4daf4a","#984ea3","#ff7f00","#ffff33","#a65628","#f781bf","#999999"]
             let colors = ["#377eb8", "#984ea3", "#4daf4a", "#ff7f00" ,"#e41a1c"]; // update to have red as the highest predation
             const colorScale = d3.scaleOrdinal().domain(predRange).range(colors);
 
             const chartArea1 = svg1.append('g')
                                    .attr('transform', `translate(${margin.left}, ${margin.top})`)
-            
+
             let bottomAxis = d3.axisBottom(gesScale);
             let bottomAxisGroup = svg1.append('g')
                                       .attr('class', 'x axis')
                                       .attr('id', 'plot1-xaxis')
                                       .attr('transform', `translate(${margin.left}, ${plotHeight - margin.top - margin.bottom - 10})`)
                                       .call(bottomAxis)
-            
+
             let bottomAxisText = bottomAxisGroup.append('text')
                 .text('Gestation')
                 .attr('x', plotWidth/2)
@@ -174,14 +224,14 @@
                 .attr('text-align', 'middle')
                 .attr('font-size', '16px')
                 .attr('fill', 'black')
-            
+
             let leftAxis = d3.axisLeft(sleepScale);
             let leftAxisGroup = svg1.append('g')
                                     .attr('class', 'y axis')
                                     .attr('id', 'plot1-yaxis')
                                     .attr('transform', `translate(${margin.left - 10}, ${margin.top})`)
                                     .call(leftAxis)
-            
+
             // Reference: https://www.d3indepth.com/shapes/
             let symbolCreator = d3.symbol().size(100);
             let symbolTypes = ['symbolCircle', 'symbolDiamond', 'symbolSquare', 'symbolStar', 'symbolTriangle']
@@ -190,7 +240,7 @@
                                     .join('path')
                                     .attr('id', 'svg1data')
                                     .attr('transform', d => `translate(${gesScale(d.gestation)}, ${sleepScale(d.total_sleep)})`)
-                                    .attr('d', function(d) { 
+                                    .attr('d', function(d) {
                                         symbolCreator.type(d3[symbolTypes[d.pred-1]]); // account for array indexing
                                         return symbolCreator();
                                     })
@@ -200,7 +250,7 @@
             predation.forEach( (d, i) => {
                 chartArea1.append('path')
                           .attr('transform', d => `translate(${plotWidth - 175}, ${margin.top + padding.top + 20 + i * 25})`)
-                          .attr('d', function(d) { 
+                          .attr('d', function(d) {
                                         symbolCreator.type(d3[symbolTypes[i]]);
                                         return symbolCreator();
                           })
@@ -240,7 +290,7 @@
                       .attr('font-size', '30px')
                       .attr('fill', 'black')
                       .attr('font-weight', 'bold')
-            
+
             // Two section headers
             chartArea9.append('text')
                       .attr('class', 'lollipop-section1')
@@ -251,7 +301,7 @@
                       .attr('dominant-baseline', 'middle')
                       .attr('font-size', '16px')
                       .attr('fill', 'black')
-            
+
             chartArea9.append('text')
                       .attr('class', 'lollipop-section2')
                       .attr('x', lollipopPlotWidth/2 + 50)
@@ -261,7 +311,7 @@
                       .attr('dominant-baseline', 'middle')
                       .attr('font-size', '16px')
                       .attr('fill', 'black')
-            
+
             // Figure description
             chartArea9.append('text')
                       .attr('class', 'lollipop-description')
@@ -273,7 +323,7 @@
                       .attr('dominant-baseline', 'middle')
                       .attr('font-size', '16px')
                       .attr('fill', 'black')
-            
+
             // Outer rectangle
             chartArea9.append('rect')
                       .attr('x', lollipopPlotWidth/2 - 200)
@@ -283,7 +333,7 @@
                       .style('fill', 'white')
                       .style('stroke', '#ccc')
                       .style('stroke-width', 2)
-            
+
             // Legend
             chartArea9.append('text')
                       .attr('x', lollipopPlotWidth - 75)
@@ -294,14 +344,14 @@
                       .attr('font-size', '18px')
                       .attr('fill', 'black')
                       .attr('font-weight', 'bold')
-            
+
             chartArea9.append('rect')
                       .attr('x', lollipopPlotWidth - 140)
                       .attr('y', 50)
                       .attr('height', 20)
                       .attr('width', 20)
                       .style('fill', 'green')
-            
+
             chartArea9.append('text')
                       .attr('x', lollipopPlotWidth - 60)
                       .attr('y', 60)
@@ -327,6 +377,7 @@
                       .attr('font-size', '14px')
                       .attr('fill', 'black')
 
+
             let brainSorted = data.sort( (a,b) =>  d3.ascending(a.brain_wt, b.brain_wt) );
             let data2 = brainSorted.slice(0,-10); // Remove 10 largest brain weights
             let bodySorted = data2.sort( (a,b) =>  d3.descending(a.body_wt, b.body_wt) );
@@ -349,7 +400,7 @@
             // Tradeoff with the exponential jump near the bottom of the plot (length increase is not intuitive)
             const bodyWeightScale = d3.scaleLog().domain(boweightRange).range([lollipopPlotWidth/2, 200]);
             const brainWeightScale = d3.scaleLog().domain(brweightRange).range([lollipopPlotWidth/2, lollipopPlotWidth - 200]);
-            
+
             let medianLifeSpan = d3.median(data, d => d.life_span); // use the entire dataset to calculate the median
             console.log(medianLifeSpan);
             let medianLifeSpanColors = ['red', 'green'];
@@ -383,7 +434,7 @@
 							.join('g')
 							.attr('class', 'lollipop2')
 							.attr('transform', d => `translate(0,${speciesScale(d.species)})`);
-            
+
             // Middle
             chartArea9.append('line')
                 .attr('x1', lollipopPlotWidth/2)
@@ -391,7 +442,7 @@
                 .attr('y1', 20)
                 .attr('y2', lollipopPlotHeight - 100)
                 .attr('stroke', 'black')
-            
+
             // Left half: body weight
             lollipops.append('line')
                 .attr('class', 'stick')
@@ -411,21 +462,21 @@
                 .attr('y2', d => speciesScale(d.species))
                 .attr('stroke', d => medianLifeSpanColors[Number(d.life_span > medianLifeSpan)])
                 .attr('stroke-width', d => Number(d.life_span < medianLifeSpan) * 2 + 1) // thicker if red
-            
+
             lollipops.append('circle')
                 .attr('class', 'pop')
                 .attr('r', circleRadius)
                 .attr('cx', d => bodyWeightScale(d.body_wt))
                 .attr('cy', d => speciesScale(d.species))
                 .attr('fill', d => medianLifeSpanColors[Number(d.life_span > medianLifeSpan)])
-            
+
             lollipops2.append('circle')
                 .attr('class', 'pop2')
                 .attr('r', circleRadius)
                 .attr('cx', d => brainWeightScale(d.brain_wt))
                 .attr('cy', d => speciesScale(d.species))
                 .attr('fill', d => medianLifeSpanColors[Number(d.life_span > medianLifeSpan)])
-            
+
             // Add text
             let leftText = lollipops.append('text')
                      .attr('class', 'lollipop-text')
@@ -436,7 +487,7 @@
                      .attr('dominant-baseline', 'middle')
                      .attr('font-size', '14px')
                      .attr('fill', 'black')
-            
+
             lollipops2.append('text')
                       .attr('class', 'lollipip-text')
                       .attr('x', d => brainWeightScale(d.brain_wt) + 7)
@@ -446,7 +497,7 @@
                       .attr('dominant-baseline', 'middle')
                       .attr('font-size', '14px')
                       .attr('fill', 'black')
-            
+
             lollipops.append('text')
                      .attr('class', 'species-text')
                      .attr('x', 140)
@@ -528,12 +579,12 @@
                         .attr('index', i)
                         .style('fill', colorScale(d.pred))
 
-                chartArea8.append('rect')
-                        .attr('x', gesScale(d.gestation))
-                        .attr('y', plotHeight - bodyWeightScale(d.body_wt))
-                        .attr('height', bodyWeightScale(d.body_wt))
-                        .attr('width', plotWidth/data.length)
-                        .style('fill', colorScale(d.pred))
+                // chartArea8.append('rect')
+                //         .attr('x', gesScale(d.gestation))
+                //         .attr('y', plotHeight - bodyWeightScale(d.body_wt))
+                //         .attr('height', bodyWeightScale(d.body_wt))
+                //         .attr('width', plotWidth/data.length)
+                //         .style('fill', colorScale(d.pred))
             })
 
         });
