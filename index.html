@@ -141,7 +141,7 @@
 
 
                 chartArea8.append("text").attr("x",-280).attr("y", -20)
-                .attr("class","title").text("Mammals: Non-Dreaming ")
+                .attr("class","title").text("Non-Dreaming ")
                 .attr('text-anchor', 'middle')
                       .attr('dominant-baseline', 'middle')
                       .attr('font-size', '30px')
@@ -197,7 +197,7 @@
             console.log(sleepRange);
             console.log(predRange);
 
-            const basicXScale = d3.scaleLinear().domain([0, data.length]).range([0, plotWidth]);
+            const basicXScale = d3.scaleLinear().domain([0, data.length]).range([5, plotWidth]);
             const dreamScale = d3.scaleLinear().domain([0,maxDream]).range([plotHeight - circleRadius, circleRadius]);
             const percentScale = d3.scaleLinear().domain([0,100]).range([plotHeight - circleRadius, circleRadius]);
 
@@ -279,11 +279,11 @@
 
             const margin = {left: 50, right: 10, top: 10, bottom: 50}
             const padding = {bottom: 50, top: 50}
-            const gesScale = d3.scaleLinear().domain(gesRange).range([0, plotWidth]);
+            const gesScale = d3.scaleLinear().domain(gesRange).range([50, plotWidth]);
             const sleepScale = d3.scaleLinear().domain(sleepRange).range([plotHeight - padding.bottom - margin.bottom, padding.top]);
 
             //["#e41a1c","#377eb8","#4daf4a","#984ea3","#ff7f00","#ffff33","#a65628","#f781bf","#999999"]
-            let colors = ["#377eb8", "#984ea3", "#4daf4a", "#ff7f00" ,"#e41a1c"]; // update to have red as the highest predation
+            let colors = ["#fff600", "#ffc302", "#ff8f00", "#ff5b00" ,"#ff0505"]; // update to have red as the highest predation
             const colorScale = d3.scaleOrdinal().domain(predRange).range(colors);
 
             const chartArea1 = svg1.append('g')
@@ -299,17 +299,27 @@
             let bottomAxisText = bottomAxisGroup.append('text')
                 .text('Gestation')
                 .attr('x', plotWidth/2)
-                .attr('y', padding.bottom - 10)
+                .attr('y', padding.bottom - 8)
                 .attr('text-align', 'middle')
-                .attr('font-size', '16px')
+                .attr('font-size', '20px')
                 .attr('fill', 'black')
 
             let leftAxis = d3.axisLeft(sleepScale);
             let leftAxisGroup = svg1.append('g')
                                     .attr('class', 'y axis')
                                     .attr('id', 'plot1-yaxis')
-                                    .attr('transform', `translate(${margin.left - 10}, ${margin.top})`)
+                                    .attr('transform', `translate(${margin.left+20}, ${margin.top})`)
                                     .call(leftAxis)
+
+            let leftAxisText = svg1.append('text')
+                .text('Sleep')
+                .attr('x', 25)
+                .attr('y', plotHeight/2)
+                .attr('text-align', 'middle')
+                .attr('font-size', '20px')
+                .attr('fill', 'black')
+                .attr('transform', 'rotate(-90,25,' + plotHeight/2 + ')')
+                .style('font-family', 'arial')
 
             // Reference: https://www.d3indepth.com/shapes/
             let symbolCreator = d3.symbol().size(100);
@@ -323,7 +333,8 @@
                                         symbolCreator.type(d3[symbolTypes[d.pred-1]]); // account for array indexing
                                         return symbolCreator();
                                     })
-                                    .style('fill', d => colorScale(d.pred))
+                                    .style('fill', d => colors[d.pred-1])
+
 
             let predation = [1, 2, 3, 4, 5];
             predation.forEach( (d, i) => {
@@ -333,16 +344,21 @@
                                         symbolCreator.type(d3[symbolTypes[i]]);
                                         return symbolCreator();
                           })
-                          .style('fill', d => colorScale(i + 1)) // account for predation ranging from 1 to 5
+                          .style('fill', d => colors[i]) // account for predation ranging from 1 to 5
+                          
                 chartArea1.append('text')
                           .attr('transform', d => `translate(${plotWidth - 160}, ${margin.top + padding.top + 24 + i * 25})`)
                           .text(predation[i])
+                          .style('font-family', 'arial')
+                          .attr('font-size', '14px')
             })
 
             // Legend header
             chartArea1.append('text')
-                      .attr('transform', d => `translate(${plotWidth - 195}, ${margin.top + padding.top})`)
+                      .attr('transform', d => `translate(${plotWidth - 181}, ${margin.top + padding.top})`)
+                      .style('font-family', 'arial')
                       .text('Predation')
+                      .attr('font-size', '20px')
 
             // let circles = chartArea1.selectAll('circle')
             //                         .data(data)
