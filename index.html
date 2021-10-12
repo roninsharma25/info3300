@@ -60,7 +60,7 @@
         // Plot 8 horizontal bar chart
         const render = data => {
 
-        const margin = {left: 500, right: 10, top: 50, bottom: 10}
+        const margin = {left: 500, right: 10, top: 60, bottom: 10}
         const innerWidth = plotWidth - margin.left-margin.right;
         const innerHeight = plotHeight - margin.top-margin.bottom;
         const dreamRange = d3.extent( data, d => d.dreaming);
@@ -76,14 +76,13 @@
         const chartArea8 = svg8.append('g')
             .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
-         //   let leftAxis = d3.axisLeft(priceScale)
      //   chartArea8.append('g').call(d3.axisLeft(yScale))
 
 
             // left rectangle
             chartArea8.selectAll("rect.left").data(data)
                 .enter().append("rect")
-                .attr('transform', `translate(${margin.left - 620})`)
+                .attr('transform', `translate(${margin.left - 650})`)
                 .attr("x", d => ( - nonDreamScale(d.non_dreaming)))
                 .attr('y', d => yScale(d.species))
                 .attr("class", "left")
@@ -93,17 +92,18 @@
                 .attr("stroke", "black")
                 .style("fill", "green")
 
-            // Rectangle Text
+            // Rectangle Text value
             chartArea8.selectAll("text.leftscore")
                 .data(data)
                 .enter().append("text")
-                .attr("x",  d => (-nonDreamScale(d.non_dreaming)))
+                .attr("x",  d => (-nonDreamScale(d.non_dreaming) - 30))
                 .attr("y", d => yScale(d.species))
-                .attr("dx", "-130")
+                .attr("dx", "-132")
                 .attr("dy", ".96em")
                 .attr('font-size', '10px')
                 .attr("text-anchor", "middle")
                 .attr('class', 'leftscore')
+                .attr('font-family', 'arial')
                 .text(d => d['non_dreaming']);
 
 
@@ -114,7 +114,8 @@
                 .attr("class", "right")
                 .attr('width', d =>  dreamScale(d.dreaming))
                 .attr('height', yScale.bandwidth())
-                .style("fill", "red")
+                .style("fill", "purple")
+                .attr('text-anchor', 'middle')
                 .attr("stroke-width", "1")
                 .attr("stroke", "black")
 
@@ -124,55 +125,63 @@
                 .enter().append("text")
                 .attr("x",  d => (dreamScale(d.dreaming) +20))
                 .attr("y", d => yScale(d.species))
-                .attr("dx", -12)
+                .attr("dx", -16)
                 .attr("dy", ".96em")
-                .attr("text-anchor", "middle")
+                .attr("text-anchor", "center")
+                .attr('font-family', 'arial')
                 .attr('font-size', '10px')
                 .attr('class', 'rightscore')
                 .text(d => d['dreaming']);
 
                 // Chart titles
-            chartArea8.append("text").attr("x",55).attr("y", -7)
-            .attr("class","label").text("Dreaming(hours)")
-            .attr('text-anchor', 'middle')
-                    .attr('dominant-baseline', 'middle')
-                    .attr('font-size', '15px')
-                    .attr('fill', 'black')
-                    .attr('font-weight', 'bold');
+            chartArea8.append("text")
+                .attr("x", 78)
+                .attr("y", -10)
+                .attr("class","title").text("Dreaming(hours)")
+                .attr('text-anchor', 'middle')
+                .attr('dominant-baseline', 'middle')
+                .attr('font-size', '20px')
+                .attr('fill', 'black')
+                .attr('font-weight', 'bold')
+                .attr('font-family', 'arial');
 
 
-            chartArea8.append("text").attr("x",-190).attr("y", -7)
-            .attr("class","label").text("Non-Dreaming(hours) ")
-            .attr('text-anchor', 'middle')
-                    .attr('dominant-baseline', 'middle')
-                    .attr('font-size', '15px')
-                    .attr('fill', 'black')
-                    .attr('font-weight', 'bold');
+            chartArea8.append("text")
+                .attr("x",-250)
+                .attr("y", -10)
+                .attr("class","title").text("Non-Dreaming(hours)")
+                .attr('text-anchor', 'middle')
+                .attr('dominant-baseline', 'middle')
+                .attr('font-size', '20px')
+                .attr('fill', 'black')
+                .attr('font-weight', 'bold')
+                .attr('font-family', 'arial');
 
-            chartArea8.append("text").attr("x",-120).attr("y", -30)
+            chartArea8.append("text").attr("x",-120).attr("y", -40)
                 .attr("class","title").text("Dreaming vs Non-Dreaming Pattern in Mammals ")
                 .attr('text-anchor', 'middle')
-                      .attr('dominant-baseline', 'middle')
-                      .attr('font-size', '30px')
-                      .attr('fill', 'black')
-                      .attr('font-weight', 'bold');
+                .attr('dominant-baseline', 'middle')
+                .attr('font-size', '30px')
+                .attr('fill', 'black')
+                .attr('font-weight', 'bold')
+                .attr('font-family', 'arial');
 
-            // console.log(data.species)
+    // // console.log(data.species)
 
-            // let speciesLabels = {};
-            // species.forEach( (d, i) => {
-            //     speciesLabels[d] = cleanedSpecies[i];
-            // })
+    // // let speciesLabels = {};
+    // // species.forEach( (d, i) => {
+    // //     speciesLabels[d] = cleanedSpecies[i];
+    // // })
 
-                      // Species name
+    //           // Species name
             chartArea8.selectAll("text.name")
                 .data(data)
                 .enter().append("text")
-                .attr("x", -60)
+                .attr("x", -75)
                 .attr("y", d => yScale(d.species))
                 .attr("dy", ".90em")
                 .attr("text-anchor", "middle")
-                .attr('font-size', '10px')
+                .attr('font-size', '12px')
                 .attr('class', 'name')
                 .text(function(d){return d.species;});
 
@@ -312,8 +321,8 @@
             const sleepScale = d3.scaleLinear().domain(sleepRange).range([plotHeight - padding.bottom - margin.bottom, padding.top]);
 
             //["#e41a1c","#377eb8","#4daf4a","#984ea3","#ff7f00","#ffff33","#a65628","#f781bf","#999999"]
-            let colors = ["#fff600", "#ffc302", "#ff8f00", "#ff5b00" ,"#ff0505"]; // update to have red as the highest predation
-            const colorScale = d3.scaleOrdinal().domain(predRange).range(colors);
+            let colors = ["green", "gold", "orange", "red" ,"black"]; // update to have red as the highest predation
+            const colorScale = d3.scaleOrdinal(colors).domain([1,2,3,4,5])
 
             const chartArea1 = svg1.append('g')
                                    .attr('transform', `translate(${margin.left}, ${margin.top})`)
@@ -326,7 +335,7 @@
                                       .call(bottomAxis)
 
             let bottomAxisText = bottomAxisGroup.append('text')
-                .text('Gestation (days)')
+                .text('Gestation')
                 .attr('x', plotWidth/2)
                 .attr('y', padding.bottom - 8)
                 .attr('text-align', 'middle')
@@ -341,13 +350,13 @@
                                     .call(leftAxis)
 
             let leftAxisText = svg1.append('text')
-                .text('Sleep (hours)')
-                .attr('x', 25)
+                .text('Sleep')
+                .attr('x', 30)
                 .attr('y', plotHeight/2)
                 .attr('text-align', 'middle')
                 .attr('font-size', '20px')
                 .attr('fill', 'black')
-                .attr('transform', 'rotate(-90,25,' + plotHeight/2 + ')')
+                .attr('transform', 'rotate(-90,30,' + plotHeight/2 + ')')
                 .style('font-family', 'arial')
 
             // Reference: https://www.d3indepth.com/shapes/
@@ -530,7 +539,6 @@
             let medianLifeSpanColors = ['red', 'green'];
 
             let species = [...new Set(data3.map( d => d.species ))]; // use data subset
-            console.log(species)
 
             // Cleaned species' names to make the plot more legible
             let cleanedSpecies = ['Rat', 'Chinchilla', 'Owl Monkey', 'Rock Hyrax I', 'European Hedgehog',
