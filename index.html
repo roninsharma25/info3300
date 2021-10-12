@@ -54,9 +54,6 @@
         let lollipopPlotWidth = 700;
         let lollipopPlotHeight = 700;
 
-
-
-
         // Plot 8 horizontal bar chart
         const render = data => {
 
@@ -107,7 +104,7 @@
                 .text(d => d['non_dreaming']);
 
 
-                // right rectangle
+            // right rectangle
             chartArea8.selectAll("rect.right").data(data)
                 .enter().append("rect")
                 .attr('y', d => yScale(d.species))
@@ -133,7 +130,7 @@
                 .attr('class', 'rightscore')
                 .text(d => d['dreaming']);
 
-                // Chart titles
+            // Chart titles
             chartArea8.append("text")
                 .attr("x", 78)
                 .attr("y", -10)
@@ -142,7 +139,6 @@
                 .attr('dominant-baseline', 'middle')
                 .attr('font-size', '20px')
                 .attr('fill', 'black')
-                .attr('font-weight', 'bold')
                 .attr('font-family', 'arial');
 
 
@@ -154,7 +150,6 @@
                 .attr('dominant-baseline', 'middle')
                 .attr('font-size', '20px')
                 .attr('fill', 'black')
-                .attr('font-weight', 'bold')
                 .attr('font-family', 'arial');
 
             chartArea8.append("text").attr("x",-120).attr("y", -40)
@@ -173,7 +168,28 @@
     // //     speciesLabels[d] = cleanedSpecies[i];
     // // })
 
-    //           // Species name
+            let species = [...new Set(data.map( d => d.species ))];
+
+            // Cleaned species' names to make the plot more legible
+            let cleanedSpecies = ['African Giant Pouched Rat', 'Asian Elephant', 'Baboon', 
+                                  'Big Brown Bat', 'Brazilian Tapir', 'Cat', 'Chimpanzee', 
+                                  'Chinchilla', 'Cow', 'Eastern American Mole', 'Echidna',
+                                  'European Hedgehog', 'Galago', 'Goat', 'Golden Hamster',
+                                  'Gray Seal', 'Ground Squirrel', 'Guinea Pig', 'Horse',
+                                  'Lesser Short-Tailed Shrew', 'Little Brown Bat', 'Man',
+                                  'Mouse', 'Muskshrew', 'North American Possum',
+                                  'Nine-Banded Armadillo', 'Owl Monkey', 'Patas Monkey', 
+                                  'Phalanger', 'Pig', 'Rabbit', 'Rat', 'Red Fox', 'Rhesus Monkey',
+                                  'Rock Hyrax I', 'Rock Hyrax II', 'Sheep', 'Tenrec', 
+                                  'Tree Hyrax', 'Tree Shrew', 'Vervet', 'Water Opossum'];
+
+            // Create a JSON mapping the dataset species' labels to the cleaned names
+            let speciesLabels = {};
+            species.forEach( (d, i) => {
+                speciesLabels[d] = cleanedSpecies[i];
+            })
+
+            // Species name
             chartArea8.selectAll("text.name")
                 .data(data)
                 .enter().append("text")
@@ -183,7 +199,8 @@
                 .attr("text-anchor", "middle")
                 .attr('font-size', '12px')
                 .attr('class', 'name')
-                .text(function(d){return d.species;});
+                .text(d => speciesLabels[d.species])
+                //.text(function(d){return d.species;});
 
         };
 
