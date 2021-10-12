@@ -6,11 +6,6 @@
         .gridlines .domain {
             stroke: none;
         }
-
-        #svg9 {
-            left: 250;
-            position: absolute;
-        }
     </style>
 </head>
 <body>
@@ -215,9 +210,10 @@
                             .attr('width', lollipopPlotWidth)
                             .attr('height', lollipopPlotHeight)
                             .attr('id', 'svg9')
-                            .style('border', '1px solid black')
+            
+            // slight horizontal translation to prevent text from getting cutoff
             const chartArea9 = svg9.append('g')
-                                   .attr('transform', 'translate(0, 50)');
+                                   .attr('transform', 'translate(5, 50)');
 
 
             // Remove NAs
@@ -236,6 +232,7 @@
                 d.pred = Number(d.predation);
                 d.non_dreaming = Number(d.non_dreaming);
                 d.dreaming = Number(d.dreaming);
+                d.life_span = Number(d.life_span);
 	        })
 
             console.log(data);
@@ -430,6 +427,8 @@
             // Right - brain
 
             // Title
+            let medianLifeSpanColors = ['#f54e42', 'green'];
+
             chartArea9.append('text')
                       .attr('class', 'lollipop-title')
                       .attr('x', lollipopPlotWidth/2)
@@ -440,27 +439,30 @@
                       .attr('font-size', '30px')
                       .attr('fill', 'black')
                       .attr('font-weight', 'bold')
+                      .style('font-family', 'arial')
 
             // Two section headers
             chartArea9.append('text')
                       .attr('class', 'lollipop-section1')
-                      .attr('x', lollipopPlotWidth/2 - 50)
+                      .attr('x', lollipopPlotWidth/2 - 20)
                       .attr('y', 10)
                       .text('Body Weight (kg)')
                       .attr('text-anchor', 'end')
                       .attr('dominant-baseline', 'middle')
-                      .attr('font-size', '16px')
+                      .attr('font-size', '20px')
                       .attr('fill', 'black')
+                      .style('font-family', 'arial')
 
             chartArea9.append('text')
                       .attr('class', 'lollipop-section2')
-                      .attr('x', lollipopPlotWidth/2 + 50)
+                      .attr('x', lollipopPlotWidth/2 + 20)
                       .attr('y', 10)
                       .text('Brain Weight (kg)')
                       .attr('text-anchor', 'start')
                       .attr('dominant-baseline', 'middle')
-                      .attr('font-size', '16px')
+                      .attr('font-size', '20px')
                       .attr('fill', 'black')
+                      .style('font-family', 'arial')
 
             // Figure description
             chartArea9.append('text')
@@ -471,8 +473,9 @@
                             '22 mammal subset of the dataset.')
                       .attr('text-anchor', 'middle')
                       .attr('dominant-baseline', 'middle')
-                      .attr('font-size', '16px')
+                      .attr('font-size', '12px')
                       .attr('fill', 'black')
+                      .style('font-family', 'arial')
 
             // Outer rectangle
             chartArea9.append('rect')
@@ -482,7 +485,7 @@
                       .attr('width', 400)
                       .style('fill', 'white')
                       .style('stroke', '#ccc')
-                      .style('stroke-width', 2)
+                      .style('stroke-width', 1)
 
             // Legend
             chartArea9.append('text')
@@ -494,13 +497,14 @@
                       .attr('font-size', '18px')
                       .attr('fill', 'black')
                       .attr('font-weight', 'bold')
+                      .style('font-family', 'arial')
 
             chartArea9.append('rect')
                       .attr('x', lollipopPlotWidth - 140)
                       .attr('y', 50)
                       .attr('height', 20)
                       .attr('width', 20)
-                      .style('fill', 'green')
+                      .style('fill', medianLifeSpanColors[1])
 
             chartArea9.append('text')
                       .attr('x', lollipopPlotWidth - 60)
@@ -508,15 +512,16 @@
                       .text('> Median Life Span')
                       .attr('text-anchor', 'middle')
                       .attr('dominant-baseline', 'middle')
-                      .attr('font-size', '14px')
+                      .attr('font-size', '13px')
                       .attr('fill', 'black')
+                      .style('font-family', 'arial')
 
             chartArea9.append('rect')
                       .attr('x', lollipopPlotWidth - 140)
                       .attr('y', 80)
                       .attr('height', 20)
                       .attr('width', 20)
-                      .style('fill', 'red')
+                      .style('fill', medianLifeSpanColors[0])
 
             chartArea9.append('text')
                       .attr('x', lollipopPlotWidth - 60)
@@ -524,8 +529,9 @@
                       .text('< Median Life Span')
                       .attr('text-anchor', 'middle')
                       .attr('dominant-baseline', 'middle')
-                      .attr('font-size', '14px')
+                      .attr('font-size', '13px')
                       .attr('fill', 'black')
+                      .style('font-family', 'arial')
 
 
             let brainSorted = data.sort( (a,b) =>  d3.ascending(a.brain_wt, b.brain_wt) );
@@ -553,7 +559,6 @@
 
             let medianLifeSpan = d3.median(data, d => d.life_span); // use the entire dataset to calculate the median
             console.log(medianLifeSpan);
-            let medianLifeSpanColors = ['red', 'green'];
 
             let species = [...new Set(data3.map( d => d.species ))]; // use data subset
 
@@ -573,6 +578,9 @@
 
             const speciesScale = d3.scalePoint().domain(species).range([lollipopPlotHeight - 400, 20]);
             console.log(species);
+
+            const lifeSpanRange = d3.extent( data, d => d.life_span);
+            //const lollipopColorScale = d3.scaleDiverging().domain([lifeSpanRange[0], medianLifeSpan, lifeSpanRange[1]]).range(['red', 'black', 'green']);
 
             let lollipops = chartArea9.selectAll('g.lollipop').data( data3, d => d.species)
 							.join('g')
@@ -600,7 +608,7 @@
                 .attr('y1', d => speciesScale(d.species))
                 .attr('y2', d => speciesScale(d.species))
                 .attr('stroke', d => medianLifeSpanColors[Number(d.life_span > medianLifeSpan)]) // green if above median life span, otherwise red
-                .attr('stroke-width', d => Number(d.life_span < medianLifeSpan) * 2 + 1) // thicker if red
+                .attr('stroke-width', 1) //d => Number(d.life_span < medianLifeSpan) * 2 + 1) // thicker if red
 
             // Right half: brain weight
             lollipops2.append('line')
@@ -610,7 +618,7 @@
                 .attr('y1', d => speciesScale(d.species))
                 .attr('y2', d => speciesScale(d.species))
                 .attr('stroke', d => medianLifeSpanColors[Number(d.life_span > medianLifeSpan)])
-                .attr('stroke-width', d => Number(d.life_span < medianLifeSpan) * 2 + 1) // thicker if red
+                .attr('stroke-width', 1) //d => Number(d.life_span < medianLifeSpan) * 2 + 1) // thicker if red
 
             lollipops.append('circle')
                 .attr('class', 'pop')
@@ -634,8 +642,9 @@
                      .text(d => d.body_wt)
                      .attr('text-anchor', 'end')
                      .attr('dominant-baseline', 'middle')
-                     .attr('font-size', '14px')
+                     .attr('font-size', '13px')
                      .attr('fill', 'black')
+                     .style('font-family', 'arial')
 
             lollipops2.append('text')
                       .attr('class', 'lollipip-text')
@@ -644,8 +653,9 @@
                       .text(d => d.brain_wt)
                       .attr('text-anchor', 'start')
                       .attr('dominant-baseline', 'middle')
-                      .attr('font-size', '14px')
+                      .attr('font-size', '13px')
                       .attr('fill', 'black')
+                      .style('font-family', 'arial')
 
             lollipops.append('text')
                      .attr('class', 'species-text')
@@ -656,23 +666,7 @@
                      .attr('dominant-baseline', 'middle')
                      .attr('font-size', '12px')
                      .attr('fill', 'black')
-
-
-            data.forEach( (d, i) => {
-                // Gestation vs. total_sleep, stratified by predation
-                // chartArea1.append('circle')
-                //          .attr('cx', gesScale(d.gestation))
-                //          .attr('cy', sleepScale(d.total_sleep))
-                //          .attr('r', circleRadius)
-                //          .attr('opacity', circleOpacity)
-                //          .attr('index', i)
-                //          .style('fill', colorScale(d.pred))
-
-                //
-
-
-            })
-
+                     .style('font-family', 'arial')
         });
 
     </script>
