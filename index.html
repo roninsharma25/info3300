@@ -76,13 +76,14 @@
         const chartArea8 = svg8.append('g')
             .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
-        chartArea8.append('g').call(d3.axisLeft(yScale))
+         //   let leftAxis = d3.axisLeft(priceScale)
+     //   chartArea8.append('g').call(d3.axisLeft(yScale))
 
 
             // left rectangle
             chartArea8.selectAll("rect.left").data(data)
                 .enter().append("rect")
-                .attr('transform', `translate(${margin.left - 650})`)
+                .attr('transform', `translate(${margin.left - 620})`)
                 .attr("x", d => ( - nonDreamScale(d.non_dreaming)))
                 .attr('y', d => yScale(d.species))
                 .attr("class", "left")
@@ -96,14 +97,13 @@
             chartArea8.selectAll("text.leftscore")
                 .data(data)
                 .enter().append("text")
-                .attr("x",  d => (-nonDreamScale(d.non_dreaming) - 30))
+                .attr("x",  d => (-nonDreamScale(d.non_dreaming)))
                 .attr("y", d => yScale(d.species))
                 .attr("dx", "-130")
                 .attr("dy", ".96em")
                 .attr('font-size', '10px')
                 .attr("text-anchor", "middle")
                 .attr('class', 'leftscore')
-                .attr('font-family', 'arial')
                 .text(d => d['non_dreaming']);
 
 
@@ -114,8 +114,7 @@
                 .attr("class", "right")
                 .attr('width', d =>  dreamScale(d.dreaming))
                 .attr('height', yScale.bandwidth())
-                .style("fill", "purple")
-                .attr('text-anchor', 'middle')
+                .style("fill", "red")
                 .attr("stroke-width", "1")
                 .attr("stroke", "black")
 
@@ -127,35 +126,56 @@
                 .attr("y", d => yScale(d.species))
                 .attr("dx", -12)
                 .attr("dy", ".96em")
-                .attr("text-anchor", "center")
-                .attr('font-family', 'arial')
+                .attr("text-anchor", "middle")
                 .attr('font-size', '10px')
                 .attr('class', 'rightscore')
                 .text(d => d['dreaming']);
 
                 // Chart titles
-                chartArea8.append("text")
-                .attr("x",65)
-                .attr("y", -20)
-                .attr("class","title").text("Dreaming")
-                .attr('text-anchor', 'middle')
-                .attr('dominant-baseline', 'middle')
-                .attr('font-size', '30px')
-                .attr('fill', 'black')
-                .attr('font-weight', 'bold')
-                .attr('font-family', 'arial');
+            chartArea8.append("text").attr("x",55).attr("y", -7)
+            .attr("class","label").text("Dreaming(hours)")
+            .attr('text-anchor', 'middle')
+                    .attr('dominant-baseline', 'middle')
+                    .attr('font-size', '15px')
+                    .attr('fill', 'black')
+                    .attr('font-weight', 'bold');
 
 
-                chartArea8.append("text")
-                .attr("x",-250)
-                .attr("y", -20)
-                .attr("class","title").text("Non-Dreaming ")
+            chartArea8.append("text").attr("x",-190).attr("y", -7)
+            .attr("class","label").text("Non-Dreaming(hours) ")
+            .attr('text-anchor', 'middle')
+                    .attr('dominant-baseline', 'middle')
+                    .attr('font-size', '15px')
+                    .attr('fill', 'black')
+                    .attr('font-weight', 'bold');
+
+            chartArea8.append("text").attr("x",-120).attr("y", -30)
+                .attr("class","title").text("Dreaming vs Non-Dreaming Pattern in Mammals ")
                 .attr('text-anchor', 'middle')
-                .attr('dominant-baseline', 'middle')
-                .attr('font-size', '30px')
-                .attr('fill', 'black')
-                .attr('font-weight', 'bold')
-                .attr('font-family', 'arial');
+                      .attr('dominant-baseline', 'middle')
+                      .attr('font-size', '30px')
+                      .attr('fill', 'black')
+                      .attr('font-weight', 'bold');
+
+            // console.log(data.species)
+
+            // let speciesLabels = {};
+            // species.forEach( (d, i) => {
+            //     speciesLabels[d] = cleanedSpecies[i];
+            // })
+
+                      // Species name
+            chartArea8.selectAll("text.name")
+                .data(data)
+                .enter().append("text")
+                .attr("x", -60)
+                .attr("y", d => yScale(d.species))
+                .attr("dy", ".90em")
+                .attr("text-anchor", "middle")
+                .attr('font-size', '10px')
+                .attr('class', 'name')
+                .text(function(d){return d.species;});
+
         };
 
         d3.csv(file).then( (data) => {
@@ -292,8 +312,8 @@
             const sleepScale = d3.scaleLinear().domain(sleepRange).range([plotHeight - padding.bottom - margin.bottom, padding.top]);
 
             //["#e41a1c","#377eb8","#4daf4a","#984ea3","#ff7f00","#ffff33","#a65628","#f781bf","#999999"]
-            let colors = ["green", "gold", "orange", "red" ,"black"]; // update to have red as the highest predation
-            const colorScale = d3.scaleOrdinal(colors).domain([1,2,3,4,5])
+            let colors = ["#fff600", "#ffc302", "#ff8f00", "#ff5b00" ,"#ff0505"]; // update to have red as the highest predation
+            const colorScale = d3.scaleOrdinal().domain(predRange).range(colors);
 
             const chartArea1 = svg1.append('g')
                                    .attr('transform', `translate(${margin.left}, ${margin.top})`)
@@ -306,7 +326,7 @@
                                       .call(bottomAxis)
 
             let bottomAxisText = bottomAxisGroup.append('text')
-                .text('Gestation')
+                .text('Gestation (days)')
                 .attr('x', plotWidth/2)
                 .attr('y', padding.bottom - 8)
                 .attr('text-align', 'middle')
@@ -321,13 +341,13 @@
                                     .call(leftAxis)
 
             let leftAxisText = svg1.append('text')
-                .text('Sleep')
-                .attr('x', 30)
+                .text('Sleep (hours)')
+                .attr('x', 25)
                 .attr('y', plotHeight/2)
                 .attr('text-align', 'middle')
                 .attr('font-size', '20px')
                 .attr('fill', 'black')
-                .attr('transform', 'rotate(-90,30,' + plotHeight/2 + ')')
+                .attr('transform', 'rotate(-90,25,' + plotHeight/2 + ')')
                 .style('font-family', 'arial')
 
             // Reference: https://www.d3indepth.com/shapes/
@@ -354,7 +374,7 @@
                                         return symbolCreator();
                           })
                           .style('fill', d => colors[i]) // account for predation ranging from 1 to 5
-                          
+
                 chartArea1.append('text')
                           .attr('transform', d => `translate(${plotWidth - 160}, ${margin.top + padding.top + 24 + i * 25})`)
                           .text(predation[i])
@@ -510,6 +530,7 @@
             let medianLifeSpanColors = ['red', 'green'];
 
             let species = [...new Set(data3.map( d => d.species ))]; // use data subset
+            console.log(species)
 
             // Cleaned species' names to make the plot more legible
             let cleanedSpecies = ['Rat', 'Chinchilla', 'Owl Monkey', 'Rock Hyrax I', 'European Hedgehog',
