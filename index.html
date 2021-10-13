@@ -257,7 +257,7 @@
 // #################### Start of Plot 10 -- Box Plot Predation vs Total Sleep
 //==================================================================================================
             // svg element for plot 10 (the 3rd final plot)
-            const margin3 = {top: 30, right: 50, bottom: 50, left: 50};
+            const margin3 = {top: 40, right: 50, bottom: 70, left: 10};
 
             const width3 = plotWidth - margin3.right - margin3.left;
             const height3 = plotHeight - margin3.top - margin3.bottom;
@@ -269,10 +269,10 @@
                             .attr('transform', `translate(${margin3.left},${margin3.top})`);
 
             // Chart title
-            chartArea10.append("text")
-                .attr("x", width3/2)
-                .attr("y", - margin3.top)
-                .attr("class","title").text("Total Sleep by Predation Level")
+            svg10.append("text")
+                .attr("x", plotWidth/2)
+                .attr("y", 0)
+                .attr("class","title").text("Sleep in Mammals by Predation")
                 .attr('text-anchor', 'middle')
                 .attr('dominant-baseline', 'hanging')
                 .attr('font-size', '30px')
@@ -280,29 +280,38 @@
                 .attr('font-weight', 'bold')
                 .attr('font-family', 'arial');
 
+            // Legend outline
+            svg10.append('rect')
+                    .attr('x', plotWidth - 125)
+                    .attr('y', margin3.top)
+                    .attr('width', 125)
+                    .attr('height', 145)
+                    .style('fill', 'white')
+                    .style('stroke', 'lightgrey')
+                    .style('stroke-width', 1);
+
             // Legend header
-            chartArea10.append("text")
-                      .attr("x", width3 - 50)
-                      .attr("y", 20)
+            svg10.append("text")
+                      .attr("x", plotWidth - 125/2)
+                      .attr("y", margin3.top + 10)
                       .text('Predation')
-                      .attr('text-anchor', 'start')
+                      .attr('text-anchor', 'middle')
                       .attr('dominant-baseline', 'hanging')
                       .attr('font-size', '20px')
                       .attr('fill', 'black')
-                      .attr('font-weight', 'bold')
                       .attr('font-family', 'arial');
 
             // Legend color 1
-            chartArea10.append("rect")
-                      .attr("x", width3 - 50 )
-                      .attr("y", 48 )
+            svg10.append("rect")
+                      .attr("x", plotWidth - 100)
+                      .attr("y", margin3.top + 40)
                       .attr("height", 12 )
                       .attr("width", 12 )
                       .style("fill", "green")
 
-            chartArea10.append("text")
-                      .attr("x", width3 - 30)
-                      .attr("y", 50)
+            svg10.append("text")
+                      .attr("x", plotWidth - 80)
+                      .attr("y", margin3.top + 42)
                       .text('1')
                       .attr('text-anchor', 'start')
                       .attr('dominant-baseline', 'hanging')
@@ -311,16 +320,16 @@
                       .attr('font-family', 'arial');
 
             // Legend color 2
-            chartArea10.append("rect")
-                      .attr("x", width3 - 50 )
-                      .attr("y", 68 )
+            svg10.append("rect")
+                      .attr("x", plotWidth - 100)
+                      .attr("y", margin3.top + 60)
                       .attr("height", 12 )
                       .attr("width", 12 )
                       .style("fill", "gold")
 
-            chartArea10.append("text")
-                      .attr("x", width3 - 30)
-                      .attr("y", 70)
+            svg10.append("text")
+                      .attr("x", plotWidth - 80)
+                      .attr("y", margin3.top + 62)
                       .text('2')
                       .attr('text-anchor', 'start')
                       .attr('dominant-baseline', 'hanging')
@@ -329,16 +338,16 @@
                       .attr('font-family', 'arial');
 
             // Legend color 3
-            chartArea10.append("rect")
-                      .attr("x", width3 - 50 )
-                      .attr("y", 88 )
+            svg10.append("rect")
+                      .attr("x", plotWidth - 100)
+                      .attr("y", margin3.top + 80)
                       .attr("height", 12 )
                       .attr("width", 12 )
                       .style("fill", "orange")
 
-            chartArea10.append("text")
-                      .attr("x", width3 - 30)
-                      .attr("y", 90)
+            svg10.append("text")
+                      .attr("x", plotWidth - 80)
+                      .attr("y", margin3.top + 82)
                       .text('3')
                       .attr('text-anchor', 'start')
                       .attr('dominant-baseline', 'hanging')
@@ -347,16 +356,16 @@
                       .attr('font-family', 'arial');
 
             // Legend color 4
-            chartArea10.append("rect")
-                      .attr("x", width3 - 50 )
-                      .attr("y", 108 )
+            svg10.append("rect")
+                      .attr("x", plotWidth - 100 )
+                      .attr("y", margin3.top + 100)
                       .attr("height", 12 )
                       .attr("width", 12 )
                       .style("fill", "red")
 
-            chartArea10.append("text")
-                      .attr("x", width3 - 30)
-                      .attr("y", 110)
+            svg10.append("text")
+                      .attr("x", plotWidth - 80)
+                      .attr("y", margin3.top + 102)
                       .text('4')
                       .attr('text-anchor', 'start')
                       .attr('dominant-baseline', 'hanging')
@@ -365,16 +374,16 @@
                       .attr('font-family', 'arial');
 
             // Legend color 5
-            chartArea10.append("rect")
-                      .attr("x", width3 - 50 )
-                      .attr("y", 128 )
+            svg10.append("rect")
+                      .attr("x", plotWidth - 100)
+                      .attr("y", margin3.top + 120)
                       .attr("height", 12 )
                       .attr("width", 12 )
                       .style("fill", "grey")
 
-            chartArea10.append("text")
-                      .attr("x", width3 - 30)
-                      .attr("y", 130)
+            svg10.append("text")
+                      .attr("x", plotWidth - 80)
+                      .attr("y", margin3.top + 122)
                       .text('5')
                       .attr('text-anchor', 'start')
                       .attr('dominant-baseline', 'hanging')
@@ -383,33 +392,34 @@
                       .attr('font-family', 'arial');
 
             // X-axis label
-            chartArea10.append("text")
-                      .attr("x", width3/2 - 25)
-                      .attr("y", height3 + 20)
+            svg10.append("text")
+                      .attr("x", width3/2 + margin3.left + 50)
+                      .attr("y", plotHeight - 30)
                       .text('Predation')
                       .attr('text-anchor', 'middle')
-                      .attr('dominant-baseline', 'hanging')
+                      .attr('dominant-baseline', 'auto')
                       .attr('font-size', '20px')
                       .attr('fill', 'black')
-                      .attr('font-weight', 'bold')
                       .attr('font-family', 'arial');
 
             // Y-axis label
-            chartArea10.append('text')
-                .attr('x', 130)
-                .attr('y', height3/2 -15)
-                .text('Total Sleep')
-                .attr('text-align', 'middle')
+            svg10.append('text')
+                .attr('x', 0)
+                .attr('y', 10)
+                .text('Sleep (hrs)')
+                // .attr('text-align', 'middle')
+                .attr('text-anchor', 'middle')
+                .attr('dominant-baseline', 'middle')
+                .attr('transform', `translate(${0},${margin3.top + height3/2}) rotate(${-90})`)
                 .attr('font-size', '20px')
                 .attr('fill', 'black')
-                .attr('transform', 'rotate(-90,30,' + plotHeight/2 + ')')
                 .style('font-family', 'arial')
 
             // Figure description
-            chartArea10.append('text')
+            svg10.append('text')
                       .attr('class', 'boxplot-description')
-                      .attr('x', width3/2)
-                      .attr('y', height3+margin3.bottom-5)
+                      .attr('x', width3/2 + margin3.left)
+                      .attr('y', plotHeight - 5)
                       .text('This box plot analyzes the total sleep for mammals in each of the 5 predation levels of the dataset.')
                       .attr('text-anchor', 'middle')
                       .attr('dominant-baseline', 'auto')
@@ -419,15 +429,16 @@
 
             // Show the Y scale
             var y_p10 = d3.scaleLinear()
-              // .domain([0,sleepRange[1]])
               .domain([-10,25])
-              .range([height3, 5]);
-            chartArea10.call(d3.axisLeft(y_p10))
+              .range([height3, 0]);
+            chartArea10.append("g")
+              .attr('transform', `translate(${margin3.left+30}, ${0})`)
+              .call(d3.axisLeft(y_p10))
 
             // Show the X scale
             var x_p10 = d3.scaleLinear()
               .domain([1,5])
-              .range([50, width3-100]);
+              .range([100, width3]);
             chartArea10.append("g")
                .attr("transform", `translate(${0}, ${height3})`)
                .call(d3.axisBottom(x_p10))
@@ -737,7 +748,7 @@
                     .style('stroke', 'lightgrey')
                     .style('stroke-width', 1)
 
-            
+
 
 
             let predation = [1, 2, 3, 4, 5];
