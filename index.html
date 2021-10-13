@@ -246,9 +246,6 @@
             const maxDream = Math.max(dreamRange[1],nondreamRange[1]);
 
             const predRange = d3.extent( data, d => d.pred);
-            console.log(gesRange);
-            console.log(sleepRange);
-            console.log(predRange);
 
             const basicXScale = d3.scaleLinear().domain([0, data.length]).range([5, plotWidth]);
             const dreamScale = d3.scaleLinear().domain([0,maxDream]).range([plotHeight - circleRadius, circleRadius]);
@@ -328,7 +325,6 @@
             // svg 1
             let allPredation = data.map( d => d.pred );
             let uniquePred = [...new Set(allPredation)];
-            console.log(uniquePred);
 
             const margin = {left: 50, right: 10, top: 10, bottom: 50}
             const padding = {bottom: 50, top: 50}
@@ -342,6 +338,26 @@
             const chartArea1 = svg1.append('g')
                                    .attr('transform', `translate(${margin.left}, ${margin.top})`)
 
+            let title1 = svg1.append('text')
+                .text("Length of Gestation vs Sleep in Mammals")
+                .attr('x', plotWidth/2 + 20)
+                .attr('y', 10)
+                .attr('text-anchor', 'middle')
+                .attr('dominant-baseline', 'hanging')
+                .attr('font-size', '30px')
+                .attr('fill', 'black')
+                .style('font-family','arial')
+
+            let caption1 = svg1.append('text')
+                .text("This plot shows the relation between the length of gestation and sleep for mammals of the dataset.")
+                .attr('x', plotWidth/2 + 20)
+                .attr('y', plotHeight-3)
+                .attr('text-anchor', 'middle')
+                .attr('dominant-baseline', 'auto')
+                .attr('font-size', '12px')
+                .attr('fill', 'black')
+                .style('font-family','arial')
+
             let bottomAxis = d3.axisBottom(gesScale);
             let bottomAxisGroup = svg1.append('g')
                                       .attr('class', 'x axis')
@@ -350,7 +366,7 @@
                                       .call(bottomAxis)
 
             let bottomAxisText = bottomAxisGroup.append('text')
-                .text('Gestation')
+                .text('Gestation (days)')
                 .attr('x', plotWidth/2)
                 .attr('y', padding.bottom - 8)
                 .attr('text-align', 'middle')
@@ -365,7 +381,7 @@
                                     .call(leftAxis)
 
             let leftAxisText = svg1.append('text')
-                .text('Sleep')
+                .text('Sleep (hrs)')
                 .attr('x', 30)
                 .attr('y', plotHeight/2)
                 .attr('text-align', 'middle')
@@ -388,11 +404,22 @@
                                     })
                                     .style('fill', d => colors[d.pred-1])
 
+            chartArea1.append('rect')
+                    .attr('x', plotWidth/2 + 100)
+                    .attr('y', margin.top + padding.top - 8)
+                    .attr('height', 165)
+                    .attr('width', 125)
+                    .style('fill', 'white')
+                    .style('stroke', 'lightgrey')
+                    .style('stroke-width', 1)
+
+            
+
 
             let predation = [1, 2, 3, 4, 5];
             predation.forEach( (d, i) => {
                 chartArea1.append('path')
-                          .attr('transform', d => `translate(${plotWidth - 175}, ${margin.top + padding.top + 20 + i * 25})`)
+                          .attr('transform', d => `translate(${plotWidth - 175}, ${20 + margin.top + padding.top + 20 + i * 25})`)
                           .attr('d', function(d) {
                                         symbolCreator.type(d3[symbolTypes[i]]);
                                         return symbolCreator();
@@ -400,7 +427,7 @@
                           .style('fill', d => colors[i]) // account for predation ranging from 1 to 5
 
                 chartArea1.append('text')
-                          .attr('transform', d => `translate(${plotWidth - 160}, ${margin.top + padding.top + 24 + i * 25})`)
+                          .attr('transform', d => `translate(${plotWidth - 160}, ${20+ margin.top + padding.top + 24 + i * 25})`)
                           .text(predation[i])
                           .style('font-family', 'arial')
                           .attr('font-size', '14px')
@@ -408,7 +435,7 @@
 
             // Legend header
             chartArea1.append('text')
-                      .attr('transform', d => `translate(${plotWidth - 181}, ${margin.top + padding.top})`)
+                      .attr('transform', d => `translate(${plotWidth - 182}, ${20+ margin.top + padding.top})`)
                       .style('font-family', 'arial')
                       .text('Predation')
                       .attr('font-size', '20px')
