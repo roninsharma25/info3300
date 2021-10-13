@@ -10,22 +10,19 @@
 </head>
 <body>
     <div id='plot1'></div>
-    <br>
     <div id='plot2'></div>
-    <br>
     <div id='plot3'></div>
-    <br>
     <div id='plot4'></div>
-    <br>
     <div id='plot5'></div>
-    <br>
     <div id='plot6'></div>
-    <br>
     <div id='plot7'></div>
+    <br>
+    <br>
+    <div id='plot10'></div>
+    <br> 
     <br>
     <div id='plot8'></div>
     <br>
-    <div id='plot10'></div>
     <br>
     <div id='plot9'></div>
 
@@ -656,7 +653,7 @@
             const sleepScale = d3.scaleLinear().domain(sleepRange).range([plotHeight - padding.bottom - margin.bottom, padding.top]);
 
             //["#e41a1c","#377eb8","#4daf4a","#984ea3","#ff7f00","#ffff33","#a65628","#f781bf","#999999"]
-            let colors = ["green", "gold", "orange", "red" ,"black"]; // update to have red as the highest predation
+            let colors = ["green", "gold", "orange", "red" ,"grey"]; // update to have red as the highest predation
             const colorScale = d3.scaleOrdinal(colors).domain([1,2,3,4,5])
 
             const chartArea1 = svg1.append('g')
@@ -664,13 +661,14 @@
 
             let title1 = svg1.append('text')
                 .text("Length of Gestation vs Sleep in Mammals")
-                .attr('x', plotWidth/2 + 20)
+                .attr('x', plotWidth/2 + 4)
                 .attr('y', 10)
                 .attr('text-anchor', 'middle')
                 .attr('dominant-baseline', 'hanging')
                 .attr('font-size', '30px')
                 .attr('fill', 'black')
                 .style('font-family','arial')
+                .style('font-weight','bold')
 
             let caption1 = svg1.append('text')
                 .text("This plot shows the relation between the length of gestation and sleep for mammals of the dataset.")
@@ -752,9 +750,9 @@
 
                 chartArea1.append('text')
                           .attr('transform', d => `translate(${plotWidth - 160}, ${20+ margin.top + padding.top + 24 + i * 25})`)
-                          .text(predation[i])
+                          .text(() => {if (i == 0) {return (i+1) + " - safe"} else if (i == 4) {return (i+1) + " - dangerous"} else {return (i+1)}})
                           .style('font-family', 'arial')
-                          .attr('font-size', '14px')
+                          .attr('font-size', '12px')
             })
 
             // Legend header
@@ -763,6 +761,7 @@
                       .style('font-family', 'arial')
                       .text('Predation')
                       .attr('font-size', '20px')
+                      .attr('font-weight', 'bold')
 
             // let circles = chartArea1.selectAll('circle')
             //                         .data(data)
@@ -893,10 +892,6 @@
 
             const brweightRange = d3.extent( data3, d => d.brain_wt);
             const boweightRange = d3.extent( data3, d => d.body_wt);
-            console.log("Range");
-            console.log(boweightRange);
-            console.log("Range 2");
-            console.log(brweightRange);
 
             let speciesSubset = [];
             data3.forEach( (d) => {
