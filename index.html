@@ -104,7 +104,7 @@
                 .attr("class", "right")
                 .attr('width', d =>  dreamScale(d.dreaming))
                 .attr('height', yScale.bandwidth())
-                .style("fill", "red")
+                .style("fill", "#CB4C4E")
                 .attr('text-anchor', 'middle')
                 .attr("stroke-width", "1")
                 .attr("stroke", "black")
@@ -125,26 +125,26 @@
 
             // Dreaming Label
             chartArea8.append("text")
-                .attr("x", 78)
+                .attr("x", 72)
                 .attr("y", -11)
                 .attr("class","title").text("Dreaming(hours)")
                 .attr('text-anchor', 'middle')
                 .attr('dominant-baseline', 'middle')
                 .attr('font-size', '20px')
                 .attr('fill', 'black')
-                .attr('font-weight', 'bold')
+               // .attr('font-weight', 'bold')
                 .attr('font-family', 'arial');
 
             // Non-Dreaming Label
             chartArea8.append("text")
-                .attr("x",-250)
+                .attr("x",-245)
                 .attr("y", -11)
                 .attr("class","title").text("Non-Dreaming(hours)")
                 .attr('text-anchor', 'middle')
                 .attr('dominant-baseline', 'middle')
                 .attr('font-size', '20px')
                 .attr('fill', 'black')
-                .attr('font-weight', 'bold')
+              //  .attr('font-weight', 'bold')
                 .attr('font-family', 'arial');
 
             // Chart titles and labels
