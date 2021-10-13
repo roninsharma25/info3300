@@ -438,7 +438,7 @@
               .range([100, width3]);
             chartArea10.append("g")
               .attr("transform", `translate(${0}, ${height3})`)
-              .call(d3.axisBottom(x_p10))
+              .call(d3.axisBottom(x_p10).ticks(5))
 
             // Show the Y scale
             var y_p10 = d3.scaleLinear()
