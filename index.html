@@ -260,7 +260,7 @@
 // #################### Start of Plot 10 -- Box Plot Predation vs Total Sleep
 //==================================================================================================
             // svg element for plot 10 (the 3rd final plot)
-            const margin3 = {top: 40, right: 50, bottom: 70, left: 10};
+            const margin3 = {top: 40, right: 50, bottom: 70, left: 20};
 
             const width3 = plotWidth - margin3.right - margin3.left;
             const height3 = plotHeight - margin3.top - margin3.bottom;
@@ -286,7 +286,7 @@
 
             // Legend outline
             svg10.append('rect')
-                    .attr('x', plotWidth - 125)
+                    .attr('x', plotWidth - 100 - margin3.right)
                     .attr('y', margin3.top)
                     .attr('width', 125)
                     .attr('height', 145)
@@ -296,27 +296,28 @@
 
             // Legend header
             svg10.append("text")
-                      .attr("x", plotWidth - 125/2)
+                      .attr("x", plotWidth - margin3.right/2 - 125/2)
                       .attr("y", margin3.top + 10)
                       .text('Predation')
                       .attr('text-anchor', 'middle')
                       .attr('dominant-baseline', 'hanging')
                       .attr('font-size', '20px')
                       .attr('fill', 'black')
+                      .attr('font-weight', 'bold')
                       .attr('font-family', 'arial');
 
             // Legend color 1
             svg10.append("rect")
-                      .attr("x", plotWidth - 100)
+                      .attr("x", plotWidth - margin3.right/2 - 105)
                       .attr("y", margin3.top + 40)
                       .attr("height", 12 )
                       .attr("width", 12 )
                       .style("fill", "green")
 
             svg10.append("text")
-                      .attr("x", plotWidth - 80)
+                      .attr("x", plotWidth - margin3.right/2 - 85)
                       .attr("y", margin3.top + 42)
-                      .text('1')
+                      .text('1 - safe')
                       .attr('text-anchor', 'start')
                       .attr('dominant-baseline', 'hanging')
                       .attr('font-size', '12px')
@@ -325,14 +326,14 @@
 
             // Legend color 2
             svg10.append("rect")
-                      .attr("x", plotWidth - 100)
+                      .attr("x", plotWidth - margin3.right/2 - 105)
                       .attr("y", margin3.top + 60)
                       .attr("height", 12 )
                       .attr("width", 12 )
                       .style("fill", "gold")
 
             svg10.append("text")
-                      .attr("x", plotWidth - 80)
+                      .attr("x", plotWidth - margin3.right/2 - 85)
                       .attr("y", margin3.top + 62)
                       .text('2')
                       .attr('text-anchor', 'start')
@@ -343,14 +344,14 @@
 
             // Legend color 3
             svg10.append("rect")
-                      .attr("x", plotWidth - 100)
+                      .attr("x", plotWidth - margin3.right/2 - 105)
                       .attr("y", margin3.top + 80)
                       .attr("height", 12 )
                       .attr("width", 12 )
                       .style("fill", "orange")
 
             svg10.append("text")
-                      .attr("x", plotWidth - 80)
+                      .attr("x", plotWidth - margin3.right/2 - 85)
                       .attr("y", margin3.top + 82)
                       .text('3')
                       .attr('text-anchor', 'start')
@@ -361,14 +362,14 @@
 
             // Legend color 4
             svg10.append("rect")
-                      .attr("x", plotWidth - 100 )
+                      .attr("x", plotWidth - margin3.right/2 - 105 )
                       .attr("y", margin3.top + 100)
                       .attr("height", 12 )
                       .attr("width", 12 )
                       .style("fill", "red")
 
             svg10.append("text")
-                      .attr("x", plotWidth - 80)
+                      .attr("x", plotWidth - margin3.right/2 - 85)
                       .attr("y", margin3.top + 102)
                       .text('4')
                       .attr('text-anchor', 'start')
@@ -379,16 +380,16 @@
 
             // Legend color 5
             svg10.append("rect")
-                      .attr("x", plotWidth - 100)
+                      .attr("x", plotWidth - margin3.right/2 - 105)
                       .attr("y", margin3.top + 120)
                       .attr("height", 12 )
                       .attr("width", 12 )
                       .style("fill", "grey")
 
             svg10.append("text")
-                      .attr("x", plotWidth - 80)
+                      .attr("x", plotWidth - margin3.right/2 - 85)
                       .attr("y", margin3.top + 122)
-                      .text('5')
+                      .text('5 - dangerous')
                       .attr('text-anchor', 'start')
                       .attr('dominant-baseline', 'hanging')
                       .attr('font-size', '12px')
@@ -399,7 +400,7 @@
             svg10.append("text")
                       .attr("x", width3/2 + margin3.left + 50)
                       .attr("y", plotHeight - 30)
-                      .text('Predation')
+                      .text('Predation (index)')
                       .attr('text-anchor', 'middle')
                       .attr('dominant-baseline', 'auto')
                       .attr('font-size', '20px')
@@ -409,7 +410,7 @@
             // Y-axis label
             svg10.append('text')
                 .attr('x', 0)
-                .attr('y', 10)
+                .attr('y', 25)
                 .text('Sleep (hrs)')
                 // .attr('text-align', 'middle')
                 .attr('text-anchor', 'middle')
@@ -422,14 +423,22 @@
             // Figure description
             svg10.append('text')
                       .attr('class', 'boxplot-description')
-                      .attr('x', width3/2 + margin3.left)
+                      .attr('x', width3/2 + margin3.left + 50)
                       .attr('y', plotHeight - 5)
-                      .text('This box plot analyzes the total sleep for mammals in each of the 5 predation levels of the dataset.')
+                      .text('Fig. 2. This box plot analyzes the total sleep for mammals in each of the 5 predation levels.')
                       .attr('text-anchor', 'middle')
                       .attr('dominant-baseline', 'auto')
                       .attr('font-size', '12px')
                       .attr('fill', 'black')
                       .style('font-family', 'arial');
+
+            // Show the X scale
+            var x_p10 = d3.scaleLinear()
+              .domain([1,5])
+              .range([100, width3]);
+            chartArea10.append("g")
+              .attr("transform", `translate(${0}, ${height3})`)
+              .call(d3.axisBottom(x_p10))
 
             // Show the Y scale
             var y_p10 = d3.scaleLinear()
@@ -438,14 +447,6 @@
             chartArea10.append("g")
               .attr('transform', `translate(${margin3.left+30}, ${0})`)
               .call(d3.axisLeft(y_p10))
-
-            // Show the X scale
-            var x_p10 = d3.scaleLinear()
-              .domain([1,5])
-              .range([100, width3]);
-            chartArea10.append("g")
-                       .attr("transform", `translate(${0}, ${height3})`)
-                       .call(d3.axisBottom(x_p10))
 
             // Box variable
             var box_width = x_p10(2.5) - x_p10(2.0)
