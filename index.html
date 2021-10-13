@@ -50,7 +50,7 @@
         let lollipopPlotHeight = 700;
 
         // =================================================================================================
-        // #################### Double bar Chart dreams vs Non Dreaming
+        // #################### Double bar Chart dreaming vs Non Dreaming ##############################
         //==================================================================================================
         // Function in called in the .then()
 
@@ -68,8 +68,8 @@
 
         const svg8 = plot8Div.append('svg')
                             .attr('width', 750)
-                            .attr('height', plotHeight)
-                          //  .style('border', '1px solid black')
+                            .attr('height', 650)
+                       //     .style('border', '1px solid black')
         const chartArea8 = svg8.append('g')
             .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
@@ -194,9 +194,20 @@
                         .attr('class', 'name')
                         .text(d => speciesLabels[d.species]);
 
+            // Figure description/Caption
+            chartArea8.append('text')
+                .attr('x', -130)
+                .attr('y', 560)
+                .text('Fig. 2. The double bar chart plot illustrates the relationship between Non-dreaming and dreaming in Mammals.')
+                .attr('text-anchor', 'middle')
+                .attr('dominant-baseline', 'auto')
+                .attr('font-size', '12px')
+                .attr('fill', 'black')
+                .style('font-family', 'arial');
+
         };
 // =================================================================================================
-// #################### End of Plot 8 -- Double bar Chart dreams vs Non Dreaming
+// #################### End of Plot 8 -- Double bar Chart dreaming vs Non Dreaming ################
 //==================================================================================================
 
 
@@ -737,7 +748,7 @@
                     .style('stroke', 'lightgrey')
                     .style('stroke-width', 1)
 
-            
+
 
 
             let predation = [1, 2, 3, 4, 5];
